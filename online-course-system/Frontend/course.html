@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Course Detail</title>
+</head>
+<body>
+
+<h1 id="courseTitle"></h1>
+<p id="courseDescription"></p>
+<script>
+
+const params = new URLSearchParams(window.location.search)
+const id = params.get("id")
+fetch("http://localhost:3000/courses/" + id)
+.then(res=>res.json())
+.then(data=>{
+
+document.getElementById("courseTitle").innerText = data[0].title
+document.getElementById("courseDescription").innerText = data[0].description
+})
+</script>
+</body>
+</html>
