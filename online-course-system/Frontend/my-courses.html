@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>My Courses - คอร์สของฉัน</title>
+</head>
+
+<body style="margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6;">
+
+    <nav
+        style="background: #2c3e50; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button onclick="window.location.href='index.html'"
+                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                🏠 หน้าแรก
+            </button>
+            <h2 style="margin: 0 0 0 15px; font-size: 1.2rem; border-left: 1px solid #5d6d7e; padding-left: 15px;">
+                คอร์สของฉัน</h2>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="navUserName" style="font-weight: bold; color: #f1c40f;"></span>
+            <button onclick="logout()"
+                style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                ออกจากระบบ
+            </button>
+        </div>
+    </nav>
+
+    <div style="padding: 40px 20px; max-width: 1100px; margin: auto;">
+        <div style="margin-bottom: 30px;">
+            <h1 style="color: #2c3e50; margin: 0;">📚 คอร์สที่คุณกำลังเรียน</h1>
+            <p style="color: #7f8c8d;">ติดตามความคืบหน้าและเรียนต่อจากที่ค้างไว้ได้ที่นี่</p>
+        </div>
+
+        <div id="myCoursesList"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #95a5a6;">
+                กำลังโหลดข้อมูลคอร์สของคุณ...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "http://localhost:3000/api"; // ปรับให้ตรงกับเส้นทางหลักของคุณ
+
+        // 1. ตรวจสอบ Login ทันที
+        const userData = localStorage.getItem("user");
+        if (!userData) {
+            window.location.href = "login.html";
+        } else {
+            const user = JSON.parse(userData);
+            document.getElementById("navUserName").innerText = "สวัสดี, " + (user.name || "Member");
+        }
+
+        // 2. ฟังก์ชันโหลดข้อมูลคอร์ส
+        async function loadMyCourses() {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) return;
+
+            try {
+                // เรียก API ที่จัดการ Route /my-courses/:userId
+                const response = await fetch(`http://localhost:3000/api/progress/my-courses/${user.id}`);
+                const courses = await response.json();
+
+                const list = document.getElementById("myCoursesList");
+                list.innerHTML = "";
+
+                if (!courses || courses.length === 0) {
+                    list.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: white; border-radius: 15px;">
+                            <p style="font-size: 1.2rem; color: #7f8c8d;">คุณยังไม่ได้ลงทะเบียนคอร์สใดๆ</p>
+                            <button onclick="window.location.href='index.html'" style="margin-top:15px; padding:10px 20px; background:#3498db; color:white; border:none; border-radius:5px; cursor:pointer;">ไปดูคอร์สทั้งหมด</button>
+                        </div>`;
+                    return;
+                }
+
+                courses.forEach(course => {
+                    const total = course.total_lessons || 0;
+                    const completed = course.completed_lessons || 0;
+                    const passed = course.passed_quizzes || 0;
+
+                    const learnPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+                    const quizPercent = total > 0 ? Math.round((passed / total) * 100) : 0;
+
+                    const card = document.createElement("div");
+                    card.style = "background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: transform 0.3s; display: flex; flex-direction: column; border: 1px solid #eee;";
+
+                    // Hover effect
+                    card.onmouseover = () => card.style.transform = "translateY(-5px)";
+                    card.onmouseout = () => card.style.transform = "translateY(0)";
+
+                    card.innerHTML = `
+                        <div style="padding: 25px; flex-grow: 1;">
+                            <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 1.3rem;">${course.title}</h3>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
+                                    <span style="color: #7f8c8d;">📺 ความคืบหน้าการเรียน</span>
+                                    <span style="font-weight:bold; color:#27ae60;">${learnPercent}%</span>
+                                </div>
+                                <div style="width: 100%; background: #ecf0f1; height: 8px; border-radius: 10px; overflow: hidden;">
+                                    <div style="width: ${learnPercent}%; background: #2ecc71; height: 100%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 20px;">
+                                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
+                                    <span style="color: #7f8c8d;">📝 ผลการทดสอบ</span>
+                                    <span style="font-weight:bold; color:#3498db;">${quizPercent}%</span>
+                                </div>
+                                <div style="width: 100%; background: #ecf0f1; height: 8px; border-radius: 10px; overflow: hidden;">
+                                    <div style="width: ${quizPercent}%; background: #3498db; height: 100%; border-radius: 10px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 0 25px 25px 25px;">
+                            <button onclick="window.location.href='course.html?id=${course.id}'" 
+                                style="width:100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight:bold; transition: background 0.2s;">
+                                เข้าสู่บทเรียนต่อ 🚀
+                            </button>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Error loading courses:", err);
+                document.getElementById("myCoursesList").innerHTML = "<div style='grid-column: 1/-1; color: red; text-align: center;'>ไม่สามารถโหลดข้อมูลได้ในขณะนี้</div>";
+            }
+        }
+
+        // 3. ฟังก์ชัน Logout
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณต้องการออกจากระบบใช่หรือไม่",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#95a5a6',
+                confirmButtonText: 'ใช่, ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem("user");
+                    window.location.href = "login.html";
+                }
+            });
+        }
+
+        // เริ่มต้นโหลดข้อมูล
+        window.onload = loadMyCourses;
+    </script>
+</body>
+
+</html>

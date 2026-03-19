@@ -1,0 +1,73 @@
+const express = require("express");
+const router = express.Router();
+
+module.exports = (db) => {
+    // ดึงบทเรียนทั้งหมดของคอร์ส
+    router.get("/course/:courseId", (req, res) => {
+        const courseId = req.params.courseId;
+        const userId = req.query.userId;
+
+        const sql = `
+            SELECT l.*, 
+            IFNULL(lp.is_completed, 0) AS is_completed
+            FROM lessons l
+            LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
+            WHERE l.course_id = ?
+            ORDER BY l.id ASC`;
+
+        db.query(sql, [userId, courseId], (err, results) => {
+            if (err) {
+                console.error("SQL Error:", err);
+                return res.status(500).json(err);
+            }
+            res.json(results);
+        });
+    });
+
+    // ส่วนของ POST สำหรับเพิ่มบทเรียน (ก๊อปอันเดิมของคุณมาไว้ตรงนี้ด้วย)
+    router.post("/", (req, res) => {
+        const { course_id, title, video_url } = req.body;
+        const sql = "INSERT INTO lessons (course_id, title, video_url) VALUES (?, ?, ?)";
+        db.query(sql, [course_id, title, video_url], (err, result) => {
+            if (err) return res.status(500).json(err);
+            res.json({ message: "เพิ่มบทเรียนสำเร็จ", id: result.insertId });
+        });
+    });
+    // ลบบทเรียน (DELETE)
+    router.delete("/:id", (req, res) => {
+        const lessonId = req.params.id;
+
+        // ต้องลบข้อมูลในตารางที่เชื่อมกับ lesson_id นี้ก่อน 
+        // ไม่งั้นจะติด Error Foreign Key Constraint (ถ้าคุณตั้งค่า Database ไว้)
+        const deleteQuizProgress = "DELETE FROM quiz_progress WHERE lesson_id = ?";
+        const deleteLessonProgress = "DELETE FROM lesson_progress WHERE lesson_id = ?";
+        const deleteQuizzes = "DELETE FROM quizzes WHERE lesson_id = ?";
+        const deleteLesson = "DELETE FROM lessons WHERE id = ?";
+
+        // เริ่มการลบตามลำดับ
+        db.query(deleteQuizProgress, [lessonId], (err) => {
+            if (err) return res.status(500).json(err);
+
+            db.query(deleteLessonProgress, [lessonId], (err) => {
+                if (err) return res.status(500).json(err);
+
+                db.query(deleteQuizzes, [lessonId], (err) => {
+                    if (err) return res.status(500).json(err);
+
+                    // สุดท้ายคือลบตัวบทเรียนเอง
+                    db.query(deleteLesson, [lessonId], (err, result) => {
+                        if (err) return res.status(500).json(err);
+
+                        if (result.affectedRows === 0) {
+                            return res.status(404).json({ message: "ไม่พบบทเรียนที่ต้องการลบ" });
+                        }
+
+                        res.json({ message: "ลบบทเรียนและข้อมูลที่เกี่ยวข้องเรียบร้อยแล้ว" });
+                    });
+                });
+            });
+        });
+    });
+
+    return router;
+};

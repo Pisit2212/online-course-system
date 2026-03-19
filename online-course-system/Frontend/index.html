@@ -1,29 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 
 <head>
-    <title>Online Course Practice</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Course Practice | หน้าแรก</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
 </head>
 
-<body>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f8f9fa;">
 
-<h1>Course List</h1>
+    <nav
+        style="background: #2c3e50; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="display: flex; gap: 10px;">
+            <button onclick="window.location.href='index.html'"
+                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                🏠 หน้าแรก
+            </button>
 
-<div id="courseList"></div>
+            <button onclick="window.location.href='my-courses.html'"
+                style="background: #95a5a6; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                📚 คอร์สของฉัน
+            </button>
+        </div>
 
-<h2>Create Course</h2>
+        <div style="display: flex; align-items: center;">
+            <span id="navUserName" style="font-weight: bold; margin-right: 15px;"></span>
+            <button onclick="logout()"
+                style="background: #e74c3c; color: white; border: none; padding: 7px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                ออกจากระบบ
+            </button>
+        </div>
+    </nav>
 
-<input id="title" placeholder="Course Title">
-<br><br>
+    <div
+        style="max-width: 1000px; margin: 30px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
 
-<input id="description" placeholder="Course Description">
-<br><br>
+        <h1 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;">รายการคอร์สเรียน (Course List)
+        </h1>
 
-<button onclick="createCourse()">Create Course</button>
-<button id="updateBtn">Update Course</button>
+        <div id="courseList" style="margin-top: 20px;">
+            <p style="color: #666;">กำลังโหลดคอร์สเรียน...</p>
+        </div>
 
-<script src="app.js"></script>
+        <div id="instructorPanel"
+            style="display: none; background: #fdfdfd; padding: 25px; border: 2px dashed #3498db; border-radius: 10px; margin-top: 40px;">
+            <h2 style="color: #2980b9; margin-top: 0;">🛠️ สำหรับผู้สอน: สร้าง/แก้ไขคอร์ส</h2>
 
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <input id="title" placeholder="ชื่อคอร์ส (Course Title)"
+                    style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+
+                <textarea id="description" placeholder="รายละเอียดคอร์ส (Course Description)"
+                    style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; height: 100px; font-size: 16px; font-family: inherit;"></textarea>
+
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="createCourse()"
+                        style="background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1;">
+                        ➕ สร้างคอร์สใหม่
+                    </button>
+                    <button id="updateBtn"
+                        style="background: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; display: none;">
+                        💾 อัปเดตข้อมูลคอร์ส
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            const userData = localStorage.getItem("user");
+
+            // 1. ตรวจสอบการ Login
+            if (!userData) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const currentUser = JSON.parse(userData);
+
+            // 2. แสดงชื่อผู้ใช้ใน Navbar
+            const nameDisplay = document.getElementById("navUserName");
+            if (nameDisplay) {
+                nameDisplay.innerText = "สวัสดี, " + (currentUser.name || "Member");
+            }
+
+            // 3. เช็ค Role ถ้าเป็น instructor ให้แสดงเมนูสร้างคอร์ส
+            if (currentUser.role === "instructor") {
+                const panel = document.getElementById("instructorPanel");
+                if (panel) panel.style.display = "block";
+            }
+
+            // 4. เรียกฟังก์ชันโหลดคอร์สจาก app.js
+            if (typeof loadCourse === "function") {
+                loadCourse();
+            }
+        };
+
+        // ฟังก์ชัน Logout พร้อม SweetAlert2
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณต้องการออกจากระบบใช่หรือไม่",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#95a5a6',
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem("user");
+                    window.location.href = "login.html";
+                }
+            });
+        }
+        let currentEditingCourseId = null; // เก็บ ID คอร์สที่กำลังแก้ไข
+
+        // ฟังก์ชันสำหรับเตรียมฟอร์มเพื่อแก้ไข (จะถูกเรียกจาก app.js)
+        function prepareEditCourse(id, title, description) {
+            currentEditingCourseId = id;
+
+            // 1. เอาข้อมูลไปใส่ใน Input
+            document.getElementById("title").value = title;
+            document.getElementById("description").value = description;
+
+            // 2. สลับปุ่ม (ซ่อนปุ่มสร้าง แสดงปุ่มอัปเดต)
+            document.querySelector("button[onclick='createCourse()']").style.display = "none";
+            const updateBtn = document.getElementById("updateBtn");
+            updateBtn.style.display = "block";
+
+            // 3. กำหนดคำสั่งให้ปุ่มอัปเดต
+            updateBtn.onclick = function () {
+                saveCourseUpdate(id);
+            };
+
+            // 4. เลื่อนหน้าจอลงมาที่ฟอร์ม
+            document.getElementById("instructorPanel").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ฟังก์ชันส่งข้อมูลที่แก้แล้วไป Backend
+        function saveCourseUpdate(id) {
+            const title = document.getElementById("title").value;
+            const description = document.getElementById("description").value;
+
+            if (!title || !description) {
+                Swal.fire('กรุณากรอกข้อมูลให้ครบ', '', 'warning');
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/courses/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, description })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    Swal.fire('สำเร็จ!', 'แก้ไขคอร์สเรียบร้อยแล้ว', 'success').then(() => {
+                        location.reload(); // รีโหลดหน้าเพื่อแสดงข้อมูลใหม่
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Error', 'ไม่สามารถแก้ไขข้อมูลได้', 'error');
+                });
+        }
+    </script>
 </body>
 
 </html>

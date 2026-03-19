@@ -1,78 +1,49 @@
-const express = require("express")
-const mysql = require("mysql2")
-const cors = require("cors")
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
+const app = express();
 
-const app = express()
-
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 const db = mysql.createConnection({
- host:"127.0.0.1",
- port: 8700,
- user:"root",
- password:"root",
- database:"webdb"
-})
+    host: "127.0.0.1",
+    port: 8700,
+    user: "root",
+    password: "root",
+    database: "webdb"
+});
 
-app.get("/courses",(req,res)=>{
-    const sql = "SELECT * FROM courses"
+// นำเข้า Routes (ส่ง db เข้าไปด้วยทุกไฟล์)
+const authRoutes = require("./routes/auth");
+const courseRoutes = require("./routes/courses");
+const lessonRoutes = require("./routes/lessons");
+const progressRoutes = require("./routes/progress");
+const quizRoutes = require("./routes/quizzes");
 
-    db.query(sql,(err,result)=>{
-        if(err) res.send(err)
-            else res.json(result)
-    })
-})
+// ใช้งาน Routes แบ่งตามหมวดหมู่
+app.use("/api/auth", authRoutes(db));
+app.use("/api/courses", courseRoutes(db));
+app.use("/api/lessons", lessonRoutes(db));
+app.use("/api/quizzes", quizRoutes(db));
+app.use("/api/progress", progressRoutes(db));
 
-app.post("/courses",(req,res)=>{
-    const {title,description} = req.body
-    const sql = "INSERT INTO courses (title,description,instructor_id) VALUES (?,?,1)"
+// สำหรับเพิ่มข้อสอบ (Instructor)
+app.post("/api/add-quiz", (req, res) => {
+    const { lesson_id, question, option1, option2, option3, option4, answer } = req.body;
+    const sql = "INSERT INTO quizzes (lesson_id, question, option1, option2, option3, option4, answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    db.query(sql, [lesson_id, question, option1, option2, option3, option4, answer], (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ message: "Quiz added", id: result.insertId });
+    });
+});
 
-    db.query(sql,[title,description],(err,result)=>{
-        if(err) res.send(err)
-            else res.json({message:"Course created"})
-    })
-})
 
-app.delete("/courses/:id",(req, res)=> {
-    const id = req.params.id 
-    const sql = "DELETE FROM courses WHERE id=?"
-
-    db.query(sql,[id],(err,result)=>{
-        if(err) res.send(err)
-            else res.json({message:"Course deleted"})
-    })
-})
-
-app.put("/courses/:id",(req, res)=> {
-    const id = req.params.id 
-    const {title,description} = req.body
-    const sql = "UPDATE courses SET title=?, description=? WHERE id=?"
-
-    db.query(sql,[title,description,id],(err,result)=>{
-        if(err) res.send(err)
-            else res.json({message:"Course updated"})
-    })
-})
-
-app.listen(3000,()=>{
- console.log("Server running on port 3000")
-})
-
-app.get("/courses/:id",(req, res)=> {
-    const id = req.params.id
-    const sql = "SELECT * FROM courses WHERE id=?"
-
-    db.query(sql,[id],(err,result)=>{
-        if(err) res.send(err)
-            else res.json(result)
-    })
-})
-app.get("/courses/:id/lessons",(req, res)=> {
-    const courseId = req.params.id
-    const sql = "SELECT * FROM lessons WHERE course_id=?"
-    db.query(sql,[courseId],(err,result)=>{
-        if(err) res.send(err)
-            else res.json(result)
-    })
-})
+app.get("/", (req, res) => res.send("Online Course API is running smoothly!"));
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+app.listen(3000, () => {
+    console.log("🚀 Server running on http://localhost:3000");
+});

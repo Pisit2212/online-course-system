@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>เข้าสู่ระบบ - Online Course</title>
+
+    <style>
+        * {
+            font-family: 'Kanit', sans-serif !important;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #togglePassword {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        #togglePassword:hover {
+            opacity: 1;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #2980b9;
+        }
+
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .register-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <h2>Login เข้าสู่ระบบ</h2>
+
+        <div class="input-group">
+            <label for="email">อีเมล</label>
+            <input id="email" type="email" placeholder="example@email.com" autocomplete="email">
+        </div>
+
+        <div class="input-group">
+            <label for="password">รหัสผ่าน</label>
+            <div class="password-wrapper">
+                <input id="password" type="password" placeholder="ระบุรหัสผ่านของคุณ">
+                <div id="togglePassword">
+                    <img id="eyeIcon" src="https://cdn-icons-png.flaticon.com/512/159/159604.png" width="20"
+                        alt="Toggle Password">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-login" id="loginBtn" onclick="login()">ยืนยันเข้าสู่ระบบ</button>
+
+        <div class="register-link">
+            ยังไม่มีบัญชี? <a href="register.html">สมัครสมาชิกที่นี่!</a>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. ระบบสลับการมองเห็นรหัสผ่าน ---
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            if (type === 'password') {
+                eyeIcon.src = "https://cdn-icons-png.flaticon.com/512/159/159604.png";
+            } else {
+                eyeIcon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png";
+            }
+        });
+
+        // --- 2. รองรับการกดปุ่ม Enter เพื่อ Login ---
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // --- 3. ระบบ Login ---
+        function login() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            if (!email || !password) {
+                Swal.fire('กรุณากรอกข้อมูล', 'ระบุอีเมลและรหัสผ่านให้ครบถ้วน', 'warning');
+                return;
+            }
+
+            // แสดง Loading ระหว่างรอ
+            Swal.showLoading();
+
+            // เปลี่ยน URL ตรงนี้ให้ตรงกับ Backend ของคุณ (ปกติคือ /api/login)
+            fetch("http://localhost:3000/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.user) {
+                        // เก็บข้อมูล User ลง LocalStorage
+                        localStorage.setItem("user", JSON.stringify(data.user));
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'เข้าสู่ระบบสำเร็จ',
+                            text: 'ยินดีต้อนรับกลับมา, ' + (data.user.name || 'คุณผู้ใช้งาน'),
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "index.html";
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เข้าสู่ระบบไม่สำเร็จ',
+                            text: data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Error', 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ (ตรวจสอบว่าเปิด Node.js หรือยัง)', 'error');
+                });
+        }
+    </script>
+</body>
+
+</html>

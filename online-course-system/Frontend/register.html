@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>สมัครสมาชิก - Online Course</title>
+
+    <style>
+        * {
+            font-family: 'Anuphan', sans-serif !important;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .register-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .register-container h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #495057;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input#password {
+            padding-right: 48px;
+        }
+
+        #togglePassword {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        #togglePassword:hover {
+            opacity: 1;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            outline: none;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-register:active {
+            transform: scale(0.98);
+        }
+
+        .login-link {
+            margin-top: 25px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <h1>สมัครสมาชิก</h1>
+
+        <div class="input-group">
+            <label for="name">ชื่อ-นามสกุล</label>
+            <input id="name" placeholder="ระบุชื่อของคุณ" autocomplete="name">
+        </div>
+
+        <div class="input-group">
+            <label for="email">อีเมล</label>
+            <input id="email" type="email" placeholder="ตัวอย่าง: somchai@email.com" autocomplete="email">
+        </div>
+
+        <div class="input-group">
+            <label for="password">รหัสผ่าน</label>
+            <div class="password-wrapper">
+                <input id="password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร">
+                <div id="togglePassword">
+                    <img id="eyeIcon" src="https://cdn-icons-png.flaticon.com/512/159/159604.png" width="20"
+                        alt="Toggle View">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="role">สมัครเป็น:</label>
+            <select id="role">
+                <option value="" disabled selected>-- เลือกประเภทผู้ใช้งาน --</option>
+                <option value="student">นักเรียน (Student)</option>
+                <option value="instructor">อาจารย์ (Instructor)</option>
+            </select>
+        </div>
+
+        <button class="btn-register" onclick="register()">สมัครสมาชิก</button>
+
+        <div class="login-link">
+            มีบัญชีอยู่แล้ว? <a href="login.html">เข้าสู่ระบบที่นี่</a>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. ระบบสลับการมองเห็นรหัสผ่าน ---
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.src = type === 'password'
+                ? "https://cdn-icons-png.flaticon.com/512/159/159604.png"
+                : "https://cdn-icons-png.flaticon.com/512/565/565655.png";
+        });
+
+        // --- ฟังก์ชันเช็คความถูกต้องของ Email ---
+        function validateEmail(email) {
+            // รูปแบบ: ตัวอักษร@ตัวอักษร.ตัวอักษร
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // --- 2. ระบบ Register ---
+        function register() {
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const role = document.getElementById("role").value;
+
+            // 1. ตรวจสอบข้อมูลว่าง
+            if (!name || !email || !password || !role) {
+                return Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
+            }
+
+            // 2. ตรวจสอบรูปแบบ Email (เพิ่มใหม่ ✨)
+            if (!validateEmail(email)) {
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'อีเมลไม่ถูกต้อง',
+                    text: 'กรุณากรอกอีเมลให้ถูกต้อง (เช่น example@email.com)',
+                    confirmButtonColor: '#3498db'
+                });
+            }
+
+            // 3. ตรวจสอบความยาวรหัสผ่าน
+            if (password.length < 6) {
+                return Swal.fire('รหัสผ่านสั้นเกินไป', 'กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร', 'info');
+            }
+
+            const API_BASE_URL = "http://localhost:3000/api";
+            const payload = { name, email, password, role };
+
+            Swal.showLoading();
+
+            fetch(`${API_BASE_URL}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+                .then(async (response) => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.message || "สมัครสมาชิกไม่สำเร็จ");
+                    }
+                    return data;
+                })
+                .then(data => {
+                    Swal.fire("สำเร็จ!", "สมัครสมาชิกเรียบร้อย", "success")
+                        .then(() => window.location.href = "login.html");
+                })
+                .catch(err => {
+                    Swal.fire("สมัครไม่สำเร็จ", err.message, "error");
+                });
+        }
+    </script>
+</body>
+
+</html>
