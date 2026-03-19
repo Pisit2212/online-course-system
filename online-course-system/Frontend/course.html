@@ -4,220 +4,442 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Course Lessons</title>
+
+    <style>
+        * {
+            font-family: 'Anuphan', sans-serif !important;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            /* สีเทาอ่อนแบบหน้า Register */
+            color: #2c3e50;
+        }
+
+        /* --- Navbar ใหม่: สะอาดและดูแพงขึ้น --- */
+        nav {
+            background: #ffffff;
+            padding: 12px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-home {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-courses {
+            background: #f1f2f6;
+            color: #57606f;
+        }
+
+        .btn-logout {
+            background: #ff7675;
+            color: white;
+        }
+
+        .user-info {
+            text-align: center;
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        /* --- กล่องเนื้อหาหลัก --- */
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        h1#courseTitle {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        p#courseDesc {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* --- ปุ่ม Enroll & บันทึกการเรียน --- */
+        #enrollBtn,
+        .btn-finish {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        #enrollBtn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-finish {
+            background: #3498db;
+            color: white;
+        }
+
+        /* --- Progress Bar สไตล์ Minimal --- */
+        .progress-section {
+            background: #fdfdfd;
+            border: 1px solid #f1f2f6;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .progress-bar-bg {
+            background: #eee;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: 0.5s;
+            width: 0%;
+        }
+
+        .fill-video {
+            background: #3498db;
+        }
+
+        .fill-quiz {
+            background: #2ecc71;
+        }
+
+        /* --- รายการบทเรียน --- */
+        .lesson-header {
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        /* --- Admin Panel --- */
+        #adminPanel {
+            margin-top: 50px;
+            padding: 30px;
+            border: 1px solid #eee;
+            background: #fafafa;
+            border-radius: 15px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .btn-admin {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* --- สไตล์สำหรับแบบทดสอบ --- */
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 15px;
+        }
+
+        .quiz-option:hover {
+            background: #fffde7;
+            border-color: #fbc02d;
+        }
+
+        .quiz-option input {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6;">
-    <nav
-        style="background: #2c3e50; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-        <div style="display: flex; gap: 10px;">
-            <button onclick="window.location.href='index.html'"
-                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">🏠
-                หน้าแรก</button>
-            <button onclick="window.location.href='my-courses.html'"
-                style="background: #95a5a6; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">⬅️
-                คอร์สของฉัน</button>
+<body>
+    <nav>
+        <div class="nav-left">
+            <button class="btn-nav btn-home" onclick="window.location.href='index.html'">
+                หน้าแรก
+            </button>
+            <button class="btn-nav btn-courses" onclick="window.location.href='my-courses.html'">
+                คอร์สของฉัน
+            </button>
         </div>
-        <div style="flex-grow: 1; text-align: center;">
-            <span id="navCourseUser" style="font-weight: bold; color: #f1c40f;"></span>
+
+        <div class="user-info">
+            <span id="navCourseUser"></span>
         </div>
+
         <div style="display: flex; align-items: center; gap: 15px;">
-            <span id="navUserName" style="font-weight: bold;"></span>
-            <button onclick="logout()"
-                style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">ออกจากระบบ</button>
+            <span id="navUserName" style="font-weight: 500; color: #7f8c8d;"></span>
+            <button class="btn-nav btn-logout" onclick="logout()">ออกจากระบบ</button>
         </div>
     </nav>
 
-    <div
-        style="max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <button id="enrollBtn" onclick="enrollCourse()"
-            style="margin-bottom: 20px; padding: 12px 25px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; display: none; font-size: 1.1em; width: 100%;">🚀
-            ลงทะเบียนเริ่มเรียน (Enroll Now)</button>
+    <div class="container">
+        <button id="enrollBtn" onclick="enrollCourse()" style="display: none;">
+            ลงทะเบียนเริ่มเรียนเลย!
+        </button>
 
-        <h1 id="courseTitle" style="color: #2c3e50; margin-bottom: 5px;">กำลังโหลด...</h1>
-        <p id="courseDesc" style="color: #7f8c8d; line-height: 1.6;"></p>
+        <h1 id="courseTitle">กำลังโหลดคอร์ส...</h1>
+        <p id="courseDesc"></p>
 
-        <div id="progressContainer"
-            style="margin: 25px 0; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px;">
-            <div style="margin-bottom: 15px;">
-                <strong>📺 การเข้าเรียน: <span id="percentText">0</span>%</strong>
-                <div
-                    style="width: 100%; background: #eee; height: 12px; border-radius: 10px; margin-top: 5px; overflow: hidden;">
-                    <div id="progressBar" style="width: 0%; background: #28a745; height: 100%; transition: 0.5s;"></div>
-                </div>
+        <div id="progressContainer" class="progress-section">
+            <div class="progress-label">
+                <span>📺 ความคืบหน้าวิดีโอ</span>
+                <span><span id="percentText">0</span>%</span>
             </div>
-            <div>
-                <strong>📝 การทดสอบ: <span id="quizPercentText">0</span>%</strong>
-                <div
-                    style="width: 100%; background: #eee; height: 12px; border-radius: 10px; margin-top: 5px; overflow: hidden;">
-                    <div id="quizProgressBar" style="width: 0%; background: #007bff; height: 100%; transition: 0.5s;">
-                    </div>
-                </div>
+            <div class="progress-bar-bg">
+                <div id="progressBar" class="progress-fill fill-video"></div>
+            </div>
+
+            <div class="progress-label">
+                <span>📝 คะแนนทำแบบทดสอบ</span>
+                <span><span id="quizPercentText">0</span>%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="quizProgressBar" class="progress-fill fill-quiz"></div>
             </div>
         </div>
 
-        <hr>
+        <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 30px;">
 
         <div id="learningArea">
-            <h3 style="color: #2c3e50; border-left: 5px solid #3498db; padding-left: 10px;">รายการบทเรียน</h3>
-            <div id="lessonList">กำลังโหลดบทเรียน...</div>
+            <h3 class="lesson-header">รายการบทเรียน</h3>
+            <div id="lessonList">กำลังโหลดข้อมูลบทเรียน...</div>
         </div>
 
         <div id="adminPanel"
-            style="display: none; border: 2px solid #2c3e50; padding: 25px; margin-top: 40px; background: #fff; border-radius: 10px;">
-            <h2 style="color: #c0392b; margin-top: 0;">🛠️ Instructor Tools</h2>
-            <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px dashed #ccc;">
-                <h3>➕ เพิ่มบทเรียนใหม่</h3>
-                <input id="lessonTitle" placeholder="ชื่อบทเรียน"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;"><br>
-                <input id="videoUrl" placeholder="ลิงก์ Youtube"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;"><br>
-                <button onclick="addLesson()"
-                    style="background: #2c3e50; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">บันทึกบทเรียน</button>
-            </div>
-            <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 8px;">
-                <h3>📝 จัดการข้อสอบท้ายบท</h3>
+            style="display: none; margin-top: 50px; padding: 30px; border: 2px solid #3498db; background: #f0f7ff; border-radius: 20px;">
+            <h2 style="color: #2c3e50; margin-bottom: 20px;">🛠️ ส่วนจัดการเนื้อหา (สำหรับผู้สอน)</h2>
 
-                <select id="targetLessonId" onchange="loadAdminQuizList(this.value)"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                    <option value="">-- เลือกบทเรียนเพื่อดู/จัดการข้อสอบ --</option>
+            <div
+                style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h3 style="margin-bottom:15px; color:#3498db;">➕ เพิ่มบทเรียนใหม่</h3>
+                <input id="lessonTitle" placeholder="ชื่อบทเรียน (เช่น บทที่ 1: พื้นฐาน...)">
+                <input id="videoUrl" placeholder="ลิงก์วิดีโอ YouTube">
+                <button class="btn-admin" style="background:#3498db;" onclick="addLesson()">บันทึกบทเรียน</button>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h3 style="margin-bottom:15px; color:#e67e22;">📝 จัดการข้อสอบท้ายบท</h3>
+
+                <p style="margin-bottom:5px; font-weight:bold;">1. เลือกบทเรียนที่จะเพิ่มข้อสอบ:</p>
+                <select id="targetLessonId" onchange="loadAdminQuizList(this.value)" style="margin-bottom:15px;">
+                    <option value="">-- เลือกบทเรียน --</option>
                 </select>
 
-                <input id="quizQuestion" placeholder="คำถาม"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
-
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                    <input id="opt1" placeholder="ตัวเลือก 1" style="flex: 1; min-width: 120px; padding: 8px;">
-                    <input id="opt2" placeholder="ตัวเลือก 2" style="flex: 1; min-width: 120px; padding: 8px;">
-                    <input id="opt3" placeholder="ตัวเลือก 3" style="flex: 1; min-width: 120px; padding: 8px;">
-                    <input id="opt4" placeholder="ตัวเลือก 4" style="flex: 1; min-width: 120px; padding: 8px;">
+                <div id="quizFormArea">
+                    <input id="quizQuestion" placeholder="คำถาม">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <input id="opt1" placeholder="ตัวเลือกที่ 1">
+                        <input id="opt2" placeholder="ตัวเลือกที่ 2">
+                        <input id="opt3" placeholder="ตัวเลือกที่ 3">
+                        <input id="opt4" placeholder="ตัวเลือกที่ 4">
+                    </div>
+                    <select id="quizAnswer">
+                        <option value="">-- เลือกคำตอบที่ถูกต้อง --</option>
+                        <option value="1">ตัวเลือกที่ 1</option>
+                        <option value="2">ตัวเลือกที่ 2</option>
+                        <option value="3">ตัวเลือกที่ 3</option>
+                        <option value="4">ตัวเลือกที่ 4</option>
+                    </select>
+                    <button class="btn-admin" style="background:#e67e22;" onclick="addQuiz()">💾 บันทึกข้อสอบ</button>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <span>เฉลย (เลขข้อ 1-4):</span>
-                    <input id="quizAnswer" type="number" min="1" max="4"
-                        style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-
-                    <button id="quizSubmitBtn" onclick="addQuiz()"
-                        style="background: #f57f17; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                        ➕ บันทึกข้อสอบ
-                    </button>
-                </div>
-
-                <hr style="border: 0; border-top: 1px solid #e0b12a; margin: 20px 0;">
-
-                <h4 style="margin-bottom: 10px; color: #e65100;">📋 รายการข้อสอบในบทนี้:</h4>
-                <div id="adminQuizList"
-                    style="min-height: 50px; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 5px;">
-                    <p style="color:#999; font-size:0.9em; text-align:center;">กรุณาเลือกบทเรียนด้านบนเพื่อจัดการข้อสอบ
-                    </p>
-                </div>
+                <div id="adminQuizList" style="margin-top:20px;"></div>
             </div>
         </div>
-    </div>
 
-    <script>
-        const API_BASE_URL = "http://localhost:3000/api";
-        const params = new URLSearchParams(window.location.search);
-        const courseId = params.get("id");
-        const userData = localStorage.getItem("user");
 
-        if (!userData) window.location.href = "login.html";
+        <script>
+            const API_BASE_URL = "http://localhost:3000/api";
+            const params = new URLSearchParams(window.location.search);
+            const courseId = params.get("id");
+            const userData = localStorage.getItem("user");
 
-        const userObj = JSON.parse(userData);
-        const userId = userObj.id;
-        let currentLessonId = null;
-        let currentQuizData = [];
-        let player;
-        window.currentCourseOwnerId = null;
+            if (!userData) window.location.href = "login.html";
 
-        document.getElementById("navUserName").innerText = "สวัสดี, " + (userObj.name || "Member");
-        document.getElementById("navCourseUser").innerText = "กำลังเรียนในชื่อ: " + (userObj.name || "Member");
+            const userObj = JSON.parse(userData);
+            const userId = userObj.id;
+            let currentLessonId = null;
+            let currentQuizData = [];
+            let player;
+            window.currentCourseOwnerId = null;
 
-        async function initPage() {
-            try {
-                const courseRes = await fetch(`${API_BASE_URL}/courses/${courseId}`);
-                const course = await courseRes.json();
-                const c = Array.isArray(course) ? course[0] : course;
+            document.getElementById("navUserName").innerText = "สวัสดี, " + (userObj.name || "Member");
+            document.getElementById("navCourseUser").innerText = "กำลังเรียนในชื่อ: " + (userObj.name || "Member");
 
-                if (c) {
-                    document.getElementById("courseTitle").innerText = c.title;
-                    document.getElementById("courseDesc").innerText = c.description;
-                    window.currentCourseOwnerId = c.instructor_id;
+            async function initPage() {
+                try {
+                    const courseRes = await fetch(`${API_BASE_URL}/courses/${courseId}`);
+                    const course = await courseRes.json();
+                    const c = Array.isArray(course) ? course[0] : course;
 
-                    if (userId == c.instructor_id) {
-                        document.getElementById("adminPanel").style.display = "block";
-                    }
-                }
+                    if (c) {
+                        document.getElementById("courseTitle").innerText = c.title;
+                        document.getElementById("courseDesc").innerText = c.description;
+                        window.currentCourseOwnerId = c.instructor_id;
 
-                const enrollRes = await fetch(`${API_BASE_URL}/progress/check-enroll?userId=${userId}&courseId=${courseId}`);
-                const enrollData = await enrollRes.json();
-
-                if (enrollData.enrolled) {
-                    document.getElementById("enrollBtn").style.display = "none";
-                    loadLessons();
-                    updateProgressBar();
-                } else {
-                    document.getElementById("enrollBtn").style.display = "block";
-                    document.getElementById("lessonList").innerHTML = "<p style='text-align:center; padding:20px;'>🔒 กรุณาลงทะเบียนก่อนเข้าเรียน</p>";
-                }
-            } catch (err) {
-                console.error("Init Error:", err);
-            }
-        }
-
-        function loadLessons() {
-            fetch(`${API_BASE_URL}/lessons/course/${courseId}?userId=${userId}`)
-                .then(res => res.json())
-                .then(data => {
-                    const list = document.getElementById("lessonList");
-                    list.innerHTML = "";
-                    if (!data || data.length === 0) {
-                        list.innerHTML = "<p style='text-align:center;'>ยังไม่มีบทเรียน</p>";
-                        return;
-                    }
-
-                    data.forEach(lesson => {
-                        const div = document.createElement("div");
-                        div.style = "margin-bottom: 10px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;";
-
-                        const info = document.createElement("div");
-                        info.style = "flex-grow: 1;";
-                        info.innerHTML = `<strong>📖 ${lesson.title}</strong> ${lesson.is_completed > 0 ? "<span style='color:green; margin-left:10px;'>✅</span>" : ""}`;
-                        info.onclick = () => playVideo(lesson.id, lesson.video_url, lesson.title, lesson.is_completed);
-
-                        div.appendChild(info);
-
-                        if (window.currentCourseOwnerId == userId) {
-                            const delBtn = document.createElement("button");
-                            delBtn.innerText = "ลบ";
-                            delBtn.style = "background:#ff4d4d; color:white; border:none; border-radius:4px; padding:5px 10px; cursor:pointer; margin-left:10px;";
-                            delBtn.onclick = (e) => {
-                                e.stopPropagation();
-                                deleteLesson(lesson.id);
-                            };
-                            div.appendChild(delBtn);
+                        if (userId == c.instructor_id) {
+                            document.getElementById("adminPanel").style.display = "block";
                         }
-                        list.appendChild(div);
+                    }
+
+                    const enrollRes = await fetch(`${API_BASE_URL}/progress/check-enroll?userId=${userId}&courseId=${courseId}`);
+                    const enrollData = await enrollRes.json();
+
+                    if (enrollData.enrolled) {
+                        document.getElementById("enrollBtn").style.display = "none";
+                        loadLessons();
+                        updateProgressBar();
+                    } else {
+                        document.getElementById("enrollBtn").style.display = "block";
+                        document.getElementById("lessonList").innerHTML = "<p style='text-align:center; padding:20px;'>🔒 กรุณาลงทะเบียนก่อนเข้าเรียน</p>";
+                    }
+                } catch (err) {
+                    console.error("Init Error:", err);
+                }
+            }
+
+            function loadLessons() {
+                fetch(`${API_BASE_URL}/lessons/course/${courseId}?userId=${userId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const list = document.getElementById("lessonList");
+                        list.innerHTML = "";
+                        if (!data || data.length === 0) {
+                            list.innerHTML = "<p style='text-align:center;'>ยังไม่มีบทเรียน</p>";
+                            return;
+                        }
+
+                        data.forEach(lesson => {
+                            const div = document.createElement("div");
+                            div.style = "margin-bottom: 10px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;";
+
+                            const info = document.createElement("div");
+                            info.style = "flex-grow: 1;";
+                            info.innerHTML = `<strong>📖 ${lesson.title}</strong> ${lesson.is_completed > 0 ? "<span style='color:green; margin-left:10px;'>✅</span>" : ""}`;
+                            info.onclick = () => playVideo(lesson.id, lesson.video_url, lesson.title, lesson.is_completed);
+
+                            div.appendChild(info);
+
+                            if (window.currentCourseOwnerId == userId) {
+                                // 1. เพิ่มปุ่มแก้ไข (สีเหลือง)
+                                const editBtn = document.createElement("button");
+                                editBtn.innerText = "แก้ไข";
+                                editBtn.style = "background:#f1c40f; color:black; border:none; border-radius:4px; padding:5px 10px; cursor:pointer; margin-left:10px; font-weight:bold;";
+                                editBtn.onclick = (e) => {
+                                    e.stopPropagation(); // กันไม่ให้มันไปกดเล่นวิดีโอตอนจะกดแก้
+                                    editLesson(lesson.id, lesson.title, lesson.video_url);
+                                };
+                                div.appendChild(editBtn);
+
+                                // 2. ปุ่มลบเดิม (สีแดง)
+                                const delBtn = document.createElement("button");
+                                delBtn.innerText = "ลบ";
+                                delBtn.style = "background:#ff4d4d; color:white; border:none; border-radius:4px; padding:5px 10px; cursor:pointer; margin-left:10px;";
+                                delBtn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    deleteLesson(lesson.id);
+                                };
+                                div.appendChild(delBtn);
+                            }
+                            list.appendChild(div);
+                        });
+                        updateLessonDropdown(data);
                     });
-                    updateLessonDropdown(data);
-                });
-        }
+            }
 
-        function playVideo(id, url, title, isCompleted) {
-            currentLessonId = id;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            function playVideo(id, url, title, isCompleted) {
+                currentLessonId = id;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            let videoId = "";
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            videoId = (match && match[2].length === 11) ? match[2] : null;
+                let videoId = "";
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                videoId = (match && match[2].length === 11) ? match[2] : null;
 
-            if (!videoId) return Swal.fire("Error", "URL วิดีโอไม่ถูกต้อง", "error");
+                if (!videoId) return Swal.fire("Error", "URL วิดีโอไม่ถูกต้อง", "error");
 
-            const displayArea = document.getElementById("courseDesc");
-            displayArea.innerHTML = `
+                const displayArea = document.getElementById("courseDesc");
+                displayArea.innerHTML = `
                 <div style="margin-top:20px; padding:20px; background:#fff; border:1px solid #ddd; border-radius:10px;">
                     <h4 style="margin-top:0;">กำลังเรียน: ${title}</h4>
                     <div id="player"></div>
@@ -231,469 +453,517 @@
                     </div>
                 </div>`;
 
-            if (player && typeof player.destroy === 'function') player.destroy();
+                if (player && typeof player.destroy === 'function') player.destroy();
 
-            player = new YT.Player('player', {
-                height: '360', width: '100%', videoId: videoId,
-                events: { 'onStateChange': onPlayerStateChange }
-            });
+                player = new YT.Player('player', {
+                    height: '360', width: '100%', videoId: videoId,
+                    events: { 'onStateChange': onPlayerStateChange }
+                });
 
-            loadQuiz(id);
+                loadQuiz(id);
 
-            if (isCompleted > 0) {
-                setTimeout(() => {
+                if (isCompleted > 0) {
+                    setTimeout(() => {
+                        const btn = document.getElementById("completeBtn");
+                        if (btn) {
+                            btn.innerText = "🎉 เรียนบทนี้เสร็จแล้ว";
+                            btn.style.background = "#6c757d";
+                            btn.style.color = "white";
+                            btn.disabled = false;
+                            btn.style.cursor = "default";
+                        }
+                    }, 1000);
+                }
+            }
+
+            function onPlayerStateChange(event) {
+                if (event.data == YT.PlayerState.ENDED) {
                     const btn = document.getElementById("completeBtn");
-                    if (btn) {
-                        btn.innerText = "🎉 เรียนบทนี้เสร็จแล้ว";
-                        btn.style.background = "#6c757d";
-                        btn.style.color = "white";
+                    if (btn && btn.disabled) {
                         btn.disabled = false;
-                        btn.style.cursor = "default";
+                        btn.style.background = "#28a745";
+                        btn.style.color = "white";
+                        btn.style.cursor = "pointer";
+                        btn.innerText = "✅ บันทึกว่าเรียนจบแล้ว";
+                        btn.onclick = markAsDone;
                     }
-                }, 1000);
+                }
             }
-        }
 
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) {
+            function markAsDone() {
                 const btn = document.getElementById("completeBtn");
-                if (btn && btn.disabled) {
-                    btn.disabled = false;
-                    btn.style.background = "#28a745";
-                    btn.style.color = "white";
-                    btn.style.cursor = "pointer";
-                    btn.innerText = "✅ บันทึกว่าเรียนจบแล้ว";
-                    btn.onclick = markAsDone;
-                }
-            }
-        }
 
-        function markAsDone() {
-            const btn = document.getElementById("completeBtn");
+                // 1. เปลี่ยนสถานะปุ่มเป็นกำลังบันทึก (ป้องกันการกดซ้ำ)
+                btn.innerText = "⏳ กำลังบันทึก...";
+                btn.disabled = true;
 
-            // 1. เปลี่ยนสถานะปุ่มเป็นกำลังบันทึก (ป้องกันการกดซ้ำ)
-            btn.innerText = "⏳ กำลังบันทึก...";
-            btn.disabled = true;
-
-            fetch(`${API_BASE_URL}/progress/complete-lesson`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userId, course_id: courseId, lesson_id: currentLessonId })
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error("บันทึกไม่สำเร็จ");
-                    return res.json();
-                })
-                .then(() => {
-                    // 2. เมื่อสำเร็จ: เปลี่ยนหน้าตาปุ่มทันทีโดยไม่ต้องรีโหลดหน้า
-                    btn.innerText = "🎉 เรียนบทนี้เสร็จแล้ว";
-                    btn.style.background = "#6c757d"; // สีเทา
-                    btn.style.color = "white";
-                    btn.style.cursor = "default";
-                    btn.onclick = null; // ถอด event คลิกออก
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'สำเร็จ!',
-                        text: 'บันทึกความคืบหน้าแล้ว',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-
-                    // 3. อัปเดตส่วนอื่นๆ ที่เกี่ยวข้อง
-                    updateProgressBar(); // อัปเดตหลอดเปอร์เซ็นต์ข้างบน
-                    loadLessons();       // อัปเดตติ๊กถูก ✅ ในรายการบทเรียนด้านล่าง
-                })
-                .catch(err => {
-                    console.error(err);
-                    btn.disabled = false;
-                    btn.innerText = "✅ บันทึกว่าเรียนจบแล้ว";
-                    Swal.fire('Error', 'ไม่สามารถบันทึกข้อมูลได้', 'error');
-                });
-        }
-
-        // ในไฟล์ course.html
-        function updateProgressBar() {
-            // มั่นใจว่าใช้ userId จาก localStorage โดยตรงเพื่อความชัวร์
-            const currentUid = JSON.parse(localStorage.getItem("user")).id;
-
-            fetch(`${API_BASE_URL}/progress/${currentUid}/${courseId}`)
-                .then(res => res.json())
-                .then(data => {
-                    console.log("Check Progress Data:", data); // ดูใน F12 ว่า passed มาไหม
-
-                    const total = data.total || 0;
-                    const completed = data.completed || 0;
-                    const passed = data.passed || 0;
-
-                    // คำนวณ %
-                    const learnP = total > 0 ? (completed / total) * 100 : 0;
-                    const quizP = total > 0 ? (passed / total) * 100 : 0;
-
-                    // อัปเดตแถบสีเขียว (การเรียน)
-                    const progressBar = document.getElementById("progressBar");
-                    const percentText = document.getElementById("percentText");
-                    if (progressBar) progressBar.style.width = learnP + "%";
-                    if (percentText) percentText.innerText = Math.round(learnP);
-
-                    // อัปเดตแถบสีฟ้า (ข้อสอบ)
-                    const quizBar = document.getElementById("quizProgressBar");
-                    const quizText = document.getElementById("quizPercentText");
-                    if (quizBar) quizBar.style.width = quizP + "%";
-                    if (quizText) quizText.innerText = Math.round(quizP);
-                })
-                .catch(err => console.error("Progress Error:", err));
-        }
-
-        function loadQuiz(lessonId) {
-            console.log("Fetching Quiz for lesson:", lessonId);
-            fetch(`${API_BASE_URL}/quizzes/${lessonId}?userId=${userId}`)
-                .then(res => res.json())
-                .then(data => {
-                    console.log("Quiz response data:", data);
-                    const container = document.getElementById("quizContainer");
-                    const content = document.getElementById("quizContent");
-                    const submitBtn = document.getElementById("submitQuizBtn");
-
-                    if (data.hasPassed) {
-                        container.style.display = "block";
-                        content.innerHTML = "<h4 style='color:green;'>✅ คุณสอบผ่านบทเรียนนี้แล้ว!</h4>";
-                        if (submitBtn) submitBtn.style.display = "none";
-                        return;
-                    }
-
-                    // ปรับปรุงการเช็ค Array ของคำถาม (รองรับทั้ง data.questions และ data ที่เป็น Array เลย)
-                    const questions = data.questions || (Array.isArray(data) ? data : []);
-
-                    if (questions && questions.length > 0) {
-                        currentQuizData = questions;
-                        container.style.display = "block";
-                        if (submitBtn) submitBtn.style.display = "block";
-                        content.innerHTML = questions.map((q, index) => `
-                            <div style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                                <p><strong>ข้อที่ ${index + 1}: ${q.question}</strong></p>
-                                <label style="display:block; margin:5px 0; cursor:pointer;"><input type="radio" name="q${q.id}" value="1"> ${q.option1}</label>
-                                <label style="display:block; margin:5px 0; cursor:pointer;"><input type="radio" name="q${q.id}" value="2"> ${q.option2}</label>
-                                <label style="display:block; margin:5px 0; cursor:pointer;"><input type="radio" name="q${q.id}" value="3"> ${q.option3}</label>
-                                <label style="display:block; margin:5px 0; cursor:pointer;"><input type="radio" name="q${q.id}" value="4"> ${q.option4}</label>
-                            </div>`).join('');
-                    } else {
-                        container.style.display = "none";
-                    }
-                })
-                .catch(err => {
-                    console.error("Quiz Fetch Error:", err);
-                    document.getElementById("quizContainer").style.display = "none";
-                });
-        }
-        function checkQuizAnswers() {
-            let score = 0;
-            let unanswered = 0;
-
-            currentQuizData.forEach(q => {
-                const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
-                if (!sel) {
-                    unanswered++;
-                } else {
-                    // ใช้ == เพื่อให้เทียบ "4" กับ 4 ได้
-                    if (sel.value == q.answer) {
-                        score++;
-                    }
-                }
-            });
-
-            if (unanswered > 0) {
-                return Swal.fire("ไม่ครบ", `ยังตอบไม่ครบขาดอีก ${unanswered} ข้อ`, "warning");
-            }
-
-            if (score === currentQuizData.length) {
-                // ใช้ userId (ที่มีการประกาศไว้แล้วที่บรรทัด 122 ในไฟล์ของคุณ)
-                fetch(`${API_BASE_URL}/progress/save-quiz-progress`, {
+                fetch(`${API_BASE_URL}/progress/complete-lesson`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        course_id: courseId,
-                        lesson_id: currentLessonId
-                    })
+                    body: JSON.stringify({ user_id: userId, course_id: courseId, lesson_id: currentLessonId })
                 })
-                    .then(res => res.json())
-                    // ค้นหาช่วงบรรทัดที่ 269 ในไฟล์ของคุณ
-                    .then(data => {
-                        Swal.fire("เย้!", "คุณสอบผ่านทุกข้อแล้ว!", "success").then(() => {
-                            // 1. ปิดส่วนที่ทำข้อสอบ และแสดงข้อความว่าผ่านแล้วทันที
-                            const content = document.getElementById("quizContent");
-                            const submitBtn = document.getElementById("submitQuizBtn");
-                            if (content) content.innerHTML = "<h4 style='color:green;'>✅ คุณสอบผ่านบทเรียนนี้แล้ว!</h4>";
-                            if (submitBtn) submitBtn.style.display = "none";
+                    .then(res => {
+                        if (!res.ok) throw new Error("บันทึกไม่สำเร็จ");
+                        return res.json();
+                    })
+                    .then(() => {
+                        // 2. เมื่อสำเร็จ: เปลี่ยนหน้าตาปุ่มทันทีโดยไม่ต้องรีโหลดหน้า
+                        btn.innerText = "🎉 เรียนบทนี้เสร็จแล้ว";
+                        btn.style.background = "#6c757d"; // สีเทา
+                        btn.style.color = "white";
+                        btn.style.cursor = "default";
+                        btn.onclick = null; // ถอด event คลิกออก
 
-                            // 2. อัปเดต Progress Bar และรายการบทเรียน (เติมติ๊กถูก)
-                            updateProgressBar();
-                            loadLessons();
-
-                            // (เลือกได้) ถ้าอยากให้ชัวร์ว่าข้อมูลสดใหม่จริงๆ จะใช้ location.reload() แบบเดิมก็ได้
-                            // location.reload(); 
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ!',
+                            text: 'บันทึกความคืบหน้าแล้ว',
+                            timer: 1500,
+                            showConfirmButton: false
                         });
+
+                        // 3. อัปเดตส่วนอื่นๆ ที่เกี่ยวข้อง
+                        updateProgressBar(); // อัปเดตหลอดเปอร์เซ็นต์ข้างบน
+                        loadLessons();       // อัปเดตติ๊กถูก ✅ ในรายการบทเรียนด้านล่าง
                     })
                     .catch(err => {
-                        console.error("Save Error:", err);
-                        Swal.fire("Error", "บันทึกไม่สำเร็จ", "error");
+                        console.error(err);
+                        btn.disabled = false;
+                        btn.innerText = "✅ บันทึกว่าเรียนจบแล้ว";
+                        Swal.fire('Error', 'ไม่สามารถบันทึกข้อมูลได้', 'error');
                     });
-            } else {
-                Swal.fire("ไม่ผ่าน", `ได้คะแนน ${score}/${currentQuizData.length}`, "error");
             }
-        }
 
-        function addLesson() {
-            const title = document.getElementById("lessonTitle").value;
-            const video = document.getElementById("videoUrl").value;
-            if (!title || !video) return Swal.fire("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบ", "warning");
-            fetch(`${API_BASE_URL}/lessons`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ course_id: courseId, title, video_url: video })
-            }).then(() => {
-                Swal.fire({
-                    title: 'เพิ่มบทเรียนสำเร็จ !',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    location.reload();
+            // ในไฟล์ course.html
+            function updateProgressBar() {
+                // มั่นใจว่าใช้ userId จาก localStorage โดยตรงเพื่อความชัวร์
+                const currentUid = JSON.parse(localStorage.getItem("user")).id;
+
+                fetch(`${API_BASE_URL}/progress/${currentUid}/${courseId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("Check Progress Data:", data); // ดูใน F12 ว่า passed มาไหม
+
+                        const total = data.total || 0;
+                        const completed = data.completed || 0;
+                        const passed = data.passed || 0;
+
+                        // คำนวณ %
+                        const learnP = total > 0 ? (completed / total) * 100 : 0;
+                        const quizP = total > 0 ? (passed / total) * 100 : 0;
+
+                        // อัปเดตแถบสีเขียว (การเรียน)
+                        const progressBar = document.getElementById("progressBar");
+                        const percentText = document.getElementById("percentText");
+                        if (progressBar) progressBar.style.width = learnP + "%";
+                        if (percentText) percentText.innerText = Math.round(learnP);
+
+                        // อัปเดตแถบสีฟ้า (ข้อสอบ)
+                        const quizBar = document.getElementById("quizProgressBar");
+                        const quizText = document.getElementById("quizPercentText");
+                        if (quizBar) quizBar.style.width = quizP + "%";
+                        if (quizText) quizText.innerText = Math.round(quizP);
+                    })
+                    .catch(err => console.error("Progress Error:", err));
+            }
+
+            function loadQuiz(lessonId) {
+                console.log("Fetching Quiz for lesson:", lessonId);
+                fetch(`${API_BASE_URL}/quizzes/${lessonId}?userId=${userId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("Quiz response data:", data);
+                        const container = document.getElementById("quizContainer");
+                        const content = document.getElementById("quizContent");
+                        const submitBtn = document.getElementById("submitQuizBtn");
+
+                        if (data.hasPassed) {
+                            container.style.display = "block";
+                            content.innerHTML = "<h4 style='color:green;'>✅ คุณสอบผ่านบทเรียนนี้แล้ว!</h4>";
+                            if (submitBtn) submitBtn.style.display = "none";
+                            return;
+                        }
+
+                        // ปรับปรุงการเช็ค Array ของคำถาม (รองรับทั้ง data.questions และ data ที่เป็น Array เลย)
+                        const questions = data.questions || (Array.isArray(data) ? data : []);
+
+                        if (questions && questions.length > 0) {
+                            currentQuizData = questions;
+                            container.style.display = "block";
+                            if (submitBtn) submitBtn.style.display = "block";
+                            content.innerHTML = questions.map((q, index) => `
+    <div style="margin-bottom:25px; background:white; padding:20px; border-radius:15px; border:1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+        <p style="font-size:17px; font-weight:700; margin-bottom:15px; color:#2c3e50;">ข้อที่ ${index + 1}: ${q.question}</p>
+        
+        <label class="quiz-option">
+            <input type="radio" name="q${q.id}" value="1"> <span>${q.option1}</span>
+        </label>
+        <label class="quiz-option">
+            <input type="radio" name="q${q.id}" value="2"> <span>${q.option2}</span>
+        </label>
+        <label class="quiz-option">
+            <input type="radio" name="q${q.id}" value="3"> <span>${q.option3}</span>
+        </label>
+        <label class="quiz-option">
+            <input type="radio" name="q${q.id}" value="4"> <span>${q.option4}</span>
+        </label>
+    </div>`).join('');
+                        } else {
+                            container.style.display = "none";
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Quiz Fetch Error:", err);
+                        document.getElementById("quizContainer").style.display = "none";
+                    });
+            }
+            function checkQuizAnswers() {
+                let score = 0;
+                let unanswered = 0;
+
+                currentQuizData.forEach(q => {
+                    const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
+                    if (!sel) {
+                        unanswered++;
+                    } else {
+                        // ใช้ == เพื่อให้เทียบ "4" กับ 4 ได้
+                        if (sel.value == q.answer) {
+                            score++;
+                        }
+                    }
                 });
-            });
-        }
 
-        function deleteLesson(id) {
-            Swal.fire({
-                title: 'ยืนยันการลบ?',
-                text: "วิดีโอและควิซของบทนี้จะหายไปทั้งหมด!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#95a5a6',
-                confirmButtonText: 'ลบทันที',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // ส่งคำสั่งลบไปยัง Backend
-                    fetch(`${API_BASE_URL}/lessons/${id}`, { method: "DELETE" })
-                        .then(res => {
-                            if (!res.ok) throw new Error('ลบไม่สำเร็จ');
-                            return res.json();
+                if (unanswered > 0) {
+                    return Swal.fire("ไม่ครบ", `ยังตอบไม่ครบขาดอีก ${unanswered} ข้อ`, "warning");
+                }
+
+                if (score === currentQuizData.length) {
+                    // ใช้ userId (ที่มีการประกาศไว้แล้วที่บรรทัด 122 ในไฟล์ของคุณ)
+                    fetch(`${API_BASE_URL}/progress/save-quiz-progress`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            course_id: courseId,
+                            lesson_id: currentLessonId
                         })
+                    })
+                        .then(res => res.json())
+                        // ค้นหาช่วงบรรทัดที่ 269 ในไฟล์ของคุณ
                         .then(data => {
-                            // ✅ แสดงหน้าต่างสำเร็จ
-                            Swal.fire({
-                                title: 'ลบสำเร็จ!',
-                                text: 'บทเรียนและข้อมูลที่เกี่ยวข้องถูกลบแล้ว',
-                                icon: 'success',
-                                timer: 1500, // แสดง 1.5 วินาทีแล้วหายไปเอง
-                                showConfirmButton: false
-                            }).then(() => {
-                                // โหลดรายการบทเรียนใหม่และอัปเดต Progress Bar
-                                loadLessons();
+                            Swal.fire("เย้!", "คุณสอบผ่านทุกข้อแล้ว!", "success").then(() => {
+                                // 1. ปิดส่วนที่ทำข้อสอบ และแสดงข้อความว่าผ่านแล้วทันที
+                                const content = document.getElementById("quizContent");
+                                const submitBtn = document.getElementById("submitQuizBtn");
+                                if (content) content.innerHTML = "<h4 style='color:green;'>✅ คุณสอบผ่านบทเรียนนี้แล้ว!</h4>";
+                                if (submitBtn) submitBtn.style.display = "none";
+
+                                // 2. อัปเดต Progress Bar และรายการบทเรียน (เติมติ๊กถูก)
                                 updateProgressBar();
+                                loadLessons();
+
+                                // (เลือกได้) ถ้าอยากให้ชัวร์ว่าข้อมูลสดใหม่จริงๆ จะใช้ location.reload() แบบเดิมก็ได้
+                                // location.reload(); 
                             });
                         })
                         .catch(err => {
-                            console.error("Delete Error:", err);
-                            Swal.fire('Error', 'เกิดข้อผิดพลาดในการลบข้อมูล', 'error');
+                            console.error("Save Error:", err);
+                            Swal.fire("Error", "บันทึกไม่สำเร็จ", "error");
                         });
+                } else {
+                    Swal.fire("ไม่ผ่าน", `ได้คะแนน ${score}/${currentQuizData.length}`, "error");
                 }
-            });
-        }
+            }
 
-        function addQuiz() {
-            const lessonId = document.getElementById("targetLessonId").value;
-            if (!lessonId) return Swal.fire("แจ้งเตือน", "กรุณาเลือกบทเรียน", "warning");
-            const body = {
-                lesson_id: lessonId,
-                question: document.getElementById("quizQuestion").value,
-                option1: document.getElementById("opt1").value,
-                option2: document.getElementById("opt2").value,
-                option3: document.getElementById("opt3").value,
-                option4: document.getElementById("opt4").value,
-                answer: document.getElementById("quizAnswer").value
-            };
-            fetch(`${API_BASE_URL}/add-quiz`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            }).then(() => {
-                Swal.fire("สำเร็จ", "เพิ่มข้อสอบแล้ว", "success").then(() => location.reload());
-            });
-        }
+            function addLesson() {
+                const title = document.getElementById("lessonTitle").value;
+                const video = document.getElementById("videoUrl").value;
+                if (!title || !video) return Swal.fire("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบ", "warning");
+                fetch(`${API_BASE_URL}/lessons`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ course_id: courseId, title, video_url: video })
+                }).then(() => {
+                    Swal.fire({
+                        title: 'เพิ่มบทเรียนสำเร็จ !',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                });
+            }
 
-        // เพิ่มฟังก์ชันใหม่ใน <script> ของ course.html
-        function loadAdminQuizList(lessonId) {
-            if (!lessonId) return;
-            fetch(`${API_BASE_URL}/quizzes/${lessonId}`)
-                .then(res => res.json())
-                .then(data => {
-                    const questions = data.questions || (Array.isArray(data) ? data : []);
-                    const listDiv = document.getElementById("adminQuizList");
-                    listDiv.innerHTML = questions.map(q => `
+            function deleteLesson(id) {
+                Swal.fire({
+                    title: 'ยืนยันการลบ?',
+                    text: "วิดีโอและควิซของบทนี้จะหายไปทั้งหมด!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#95a5a6',
+                    confirmButtonText: 'ลบทันที',
+                    cancelButtonText: 'ยกเลิก',
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ส่งคำสั่งลบไปยัง Backend
+                        fetch(`${API_BASE_URL}/lessons/${id}`, { method: "DELETE" })
+                            .then(res => {
+                                if (!res.ok) throw new Error('ลบไม่สำเร็จ');
+                                return res.json();
+                            })
+                            .then(data => {
+                                // ✅ แสดงหน้าต่างสำเร็จ
+                                Swal.fire({
+                                    title: 'ลบสำเร็จ!',
+                                    text: 'บทเรียนและข้อมูลที่เกี่ยวข้องถูกลบแล้ว',
+                                    icon: 'success',
+                                    timer: 1500, // แสดง 1.5 วินาทีแล้วหายไปเอง
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    // โหลดรายการบทเรียนใหม่และอัปเดต Progress Bar
+                                    loadLessons();
+                                    updateProgressBar();
+                                });
+                            })
+                            .catch(err => {
+                                console.error("Delete Error:", err);
+                                Swal.fire('Error', 'เกิดข้อผิดพลาดในการลบข้อมูล', 'error');
+                            });
+                    }
+                });
+            }
+            // ฟังก์ชันดึงข้อมูลบทเรียนขึ้นมาบนฟอร์มเพื่อแก้ไข
+            let editingLessonId = null;
+
+            function editLesson(id, title, url) {
+                editingLessonId = id;
+                document.getElementById("lessonTitle").value = title;
+                document.getElementById("videoUrl").value = url;
+
+                // เปลี่ยนปุ่มบันทึกให้เป็นปุ่ม "ตกลงแก้ไข"
+                const btn = document.querySelector("button[onclick='addLesson()']");
+                if (btn) {
+                    btn.innerText = "💾 ยืนยันการแก้ไขบทเรียน";
+                    btn.style.background = "#27ae60";
+                    btn.onclick = saveEditLesson;
+                }
+                // เลื่อนจอไปที่ฟอร์มแก้ไข
+                document.getElementById("adminPanel").scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function saveEditLesson() {
+                const title = document.getElementById("lessonTitle").value;
+                const video = document.getElementById("videoUrl").value;
+
+                if (!title || !video) return Swal.fire("เตือน", "กรุณากรอกข้อมูลให้ครบ", "warning");
+
+                fetch(`${API_BASE_URL}/lessons/${editingLessonId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title: title, video_url: video })
+                }).then(res => {
+                    if (!res.ok) throw new Error("แก้ไขไม่สำเร็จ");
+                    return res.json();
+                }).then(() => {
+                    Swal.fire("สำเร็จ", "แก้ไขบทเรียนเรียบร้อยแล้ว", "success").then(() => location.reload());
+                }).catch(err => {
+                    console.error(err);
+                    Swal.fire("Error", "เกิดข้อผิดพลาดในการบันทึก", "error");
+                });
+            }
+
+            function addQuiz() {
+                const lessonId = document.getElementById("targetLessonId").value;
+                if (!lessonId) return Swal.fire("แจ้งเตือน", "กรุณาเลือกบทเรียน", "warning");
+                const body = {
+                    lesson_id: lessonId,
+                    question: document.getElementById("quizQuestion").value,
+                    option1: document.getElementById("opt1").value,
+                    option2: document.getElementById("opt2").value,
+                    option3: document.getElementById("opt3").value,
+                    option4: document.getElementById("opt4").value,
+                    answer: document.getElementById("quizAnswer").value
+                };
+                fetch(`${API_BASE_URL}/add-quiz`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                }).then(() => {
+                    Swal.fire("สำเร็จ", "เพิ่มข้อสอบแล้ว", "success").then(() => location.reload());
+                });
+            }
+
+            // เพิ่มฟังก์ชันใหม่ใน <script> ของ course.html
+            function loadAdminQuizList(lessonId) {
+                if (!lessonId) return;
+                fetch(`${API_BASE_URL}/quizzes/${lessonId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const questions = data.questions || (Array.isArray(data) ? data : []);
+                        const listDiv = document.getElementById("adminQuizList");
+                        listDiv.innerHTML = questions.map(q => `
                 <div style="border:1px solid #ddd; padding:10px; margin-top:5px; border-radius:5px; background:#f9f9f9;">
                     <p><strong>Q:</strong> ${q.question}</p>
                     <button onclick="editQuiz(${JSON.stringify(q).replace(/"/g, '&quot;')})" style="background:#f1c40f; border:none; padding:5px; border-radius:3px; cursor:pointer;">✏️ แก้ไข</button>
                     <button onclick="deleteQuiz(${q.id})" style="background:#e74c3c; color:white; border:none; padding:5px; border-radius:3px; cursor:pointer;">🗑️ ลบ</button>
                 </div>
             `).join('');
+                    });
+            }
+
+            function deleteQuiz(id) {
+                Swal.fire({
+                    title: 'ยืนยันการลบข้อสอบ?',
+                    text: "เมื่อลบแล้วจะไม่สามารถกู้คืนข้อมูลข้อสอบนี้ได้!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74c3c', // สีแดง
+                    cancelButtonColor: '#95a5a6', // สีเทา
+                    confirmButtonText: 'ใช่, ลบทันที!',
+                    cancelButtonText: 'ยกเลิก',
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ถ้ากดยืนยัน ให้ส่ง DELETE ไปที่ Backend
+                        fetch(`${API_BASE_URL}/quizzes/${id}`, { method: "DELETE" })
+                            .then(res => res.json())
+                            .then(data => {
+                                Swal.fire({
+                                    title: 'ลบสำเร็จ!',
+                                    text: 'ข้อสอบถูกลบออกจากระบบแล้ว',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                // โหลดรายการข้อสอบใหม่ (ใช้ค่าจาก Dropdown ปัจจุบัน)
+                                loadAdminQuizList(document.getElementById("targetLessonId").value);
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อสอบได้', 'error');
+                            });
+                    }
                 });
-        }
+            }
 
-        function deleteQuiz(id) {
-            Swal.fire({
-                title: 'ยืนยันการลบข้อสอบ?',
-                text: "เมื่อลบแล้วจะไม่สามารถกู้คืนข้อมูลข้อสอบนี้ได้!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c', // สีแดง
-                cancelButtonColor: '#95a5a6', // สีเทา
-                confirmButtonText: 'ใช่, ลบทันที!',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // ถ้ากดยืนยัน ให้ส่ง DELETE ไปที่ Backend
-                    fetch(`${API_BASE_URL}/quizzes/${id}`, { method: "DELETE" })
-                        .then(res => res.json())
-                        .then(data => {
-                            Swal.fire({
-                                title: 'ลบสำเร็จ!',
-                                text: 'ข้อสอบถูกลบออกจากระบบแล้ว',
-                                icon: 'success',
-                                timer: 1500,
-                                showConfirmButton: false
+            // ฟังก์ชันเตรียมแก้ไข (ดึงค่าขึ้นฟอร์ม)
+            let editingQuizId = null;
+            function editQuiz(q) {
+                editingQuizId = q.id;
+                document.getElementById("quizQuestion").value = q.question;
+                document.getElementById("opt1").value = q.option1;
+                document.getElementById("opt2").value = q.option2;
+                document.getElementById("opt3").value = q.option3;
+                document.getElementById("opt4").value = q.option4;
+                document.getElementById("quizAnswer").value = q.answer;
+
+                const btn = document.querySelector("button[onclick='addQuiz()']");
+                btn.innerText = "💾 บันทึกการแก้ไข";
+                btn.onclick = saveEditQuiz;
+            }
+
+            function saveEditQuiz() {
+                const body = {
+                    question: document.getElementById("quizQuestion").value,
+                    option1: document.getElementById("opt1").value,
+                    option2: document.getElementById("opt2").value,
+                    option3: document.getElementById("opt3").value,
+                    option4: document.getElementById("opt4").value,
+                    answer: document.getElementById("quizAnswer").value
+                };
+
+                fetch(`${API_BASE_URL}/quizzes/${editingQuizId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                }).then(() => {
+                    Swal.fire("สำเร็จ", "แก้ไขข้อสอบแล้ว", "success").then(() => location.reload());
+                });
+            }
+
+            function enrollCourse() {
+                Swal.fire({
+                    title: 'ยืนยันการลงทะเบียน?',
+                    text: "คุณต้องการเข้าร่วมหลักสูตรนี้ใช่หรือไม่?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#27ae60', // สีเขียวแบบปุ่ม Enroll
+                    cancelButtonColor: '#95a5a6',
+                    confirmButtonText: '✅ ตกลง, เริ่มเรียนเลย',
+                    cancelButtonText: 'ยกเลิก',
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ถ้ากดยืนยัน ให้ส่งข้อมูลไปที่ Backend
+                        fetch(`${API_BASE_URL}/progress/enroll`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId, courseId })
+                        })
+                            .then(res => {
+                                if (!res.ok) throw new Error('ลงทะเบียนไม่สำเร็จ');
+                                return res.json();
+                            })
+                            .then(() => {
+                                // ✅ แสดงหน้าต่างสำเร็จก่อน Refresh
+                                Swal.fire({
+                                    title: 'ลงทะเบียนสำเร็จ!',
+                                    text: 'ขอให้สนุกกับการเรียนรู้ครับ 🚀',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload(); // รีโหลดหน้าจอเพื่อเข้าสู่โหมดการเรียน
+                                });
+                            })
+                            .catch(err => {
+                                console.error("Enroll Error:", err);
+                                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลงทะเบียนได้ในขณะนี้', 'error');
                             });
-                            // โหลดรายการข้อสอบใหม่ (ใช้ค่าจาก Dropdown ปัจจุบัน)
-                            loadAdminQuizList(document.getElementById("targetLessonId").value);
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อสอบได้', 'error');
-                        });
-                }
-            });
-        }
+                    }
+                });
+            }
 
-        // ฟังก์ชันเตรียมแก้ไข (ดึงค่าขึ้นฟอร์ม)
-        let editingQuizId = null;
-        function editQuiz(q) {
-            editingQuizId = q.id;
-            document.getElementById("quizQuestion").value = q.question;
-            document.getElementById("opt1").value = q.option1;
-            document.getElementById("opt2").value = q.option2;
-            document.getElementById("opt3").value = q.option3;
-            document.getElementById("opt4").value = q.option4;
-            document.getElementById("quizAnswer").value = q.answer;
+            function updateLessonDropdown(lessons) {
+                const select = document.getElementById("targetLessonId");
+                if (!select) return;
+                select.innerHTML = '<option value="">-- เลือกบทเรียนที่จะเพิ่มข้อสอบ --</option>';
+                lessons.forEach(l => {
+                    const opt = document.createElement("option");
+                    opt.value = l.id; opt.innerText = l.title;
+                    select.appendChild(opt);
+                });
+            }
 
-            const btn = document.querySelector("button[onclick='addQuiz()']");
-            btn.innerText = "💾 บันทึกการแก้ไข";
-            btn.onclick = saveEditQuiz;
-        }
+            // --- เพิ่มคำเตือน Logout ---
+            function logout() {
+                Swal.fire({
+                    title: 'ออกจากระบบ?',
+                    text: "คุณต้องการออกจากระบบใช่หรือไม่?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#95a5a6',
+                    confirmButtonText: 'ใช่, ออกจากระบบ',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.removeItem("user");
+                        window.location.href = "login.html";
+                    }
+                });
+            }
 
-        function saveEditQuiz() {
-            const body = {
-                question: document.getElementById("quizQuestion").value,
-                option1: document.getElementById("opt1").value,
-                option2: document.getElementById("opt2").value,
-                option3: document.getElementById("opt3").value,
-                option4: document.getElementById("opt4").value,
-                answer: document.getElementById("quizAnswer").value
-            };
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-            fetch(`${API_BASE_URL}/quizzes/${editingQuizId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            }).then(() => {
-                Swal.fire("สำเร็จ", "แก้ไขข้อสอบแล้ว", "success").then(() => location.reload());
-            });
-        }
-
-        function enrollCourse() {
-            Swal.fire({
-                title: 'ยืนยันการลงทะเบียน?',
-                text: "คุณต้องการเข้าร่วมหลักสูตรนี้ใช่หรือไม่?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#27ae60', // สีเขียวแบบปุ่ม Enroll
-                cancelButtonColor: '#95a5a6',
-                confirmButtonText: '✅ ตกลง, เริ่มเรียนเลย',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // ถ้ากดยืนยัน ให้ส่งข้อมูลไปที่ Backend
-                    fetch(`${API_BASE_URL}/progress/enroll`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ userId, courseId })
-                    })
-                        .then(res => {
-                            if (!res.ok) throw new Error('ลงทะเบียนไม่สำเร็จ');
-                            return res.json();
-                        })
-                        .then(() => {
-                            // ✅ แสดงหน้าต่างสำเร็จก่อน Refresh
-                            Swal.fire({
-                                title: 'ลงทะเบียนสำเร็จ!',
-                                text: 'ขอให้สนุกกับการเรียนรู้ครับ 🚀',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                location.reload(); // รีโหลดหน้าจอเพื่อเข้าสู่โหมดการเรียน
-                            });
-                        })
-                        .catch(err => {
-                            console.error("Enroll Error:", err);
-                            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลงทะเบียนได้ในขณะนี้', 'error');
-                        });
-                }
-            });
-        }
-
-        function updateLessonDropdown(lessons) {
-            const select = document.getElementById("targetLessonId");
-            if (!select) return;
-            select.innerHTML = '<option value="">-- เลือกบทเรียนที่จะเพิ่มข้อสอบ --</option>';
-            lessons.forEach(l => {
-                const opt = document.createElement("option");
-                opt.value = l.id; opt.innerText = l.title;
-                select.appendChild(opt);
-            });
-        }
-
-        // --- เพิ่มคำเตือน Logout ---
-        function logout() {
-            Swal.fire({
-                title: 'ออกจากระบบ?',
-                text: "คุณต้องการออกจากระบบใช่หรือไม่?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#95a5a6',
-                confirmButtonText: 'ใช่, ออกจากระบบ',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.removeItem("user");
-                    window.location.href = "login.html";
-                }
-            });
-        }
-
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        window.onload = initPage;
-    </script>
+            window.onload = initPage;
+        </script>
 </body>
 
 </html>

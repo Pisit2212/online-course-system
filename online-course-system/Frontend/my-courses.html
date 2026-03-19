@@ -4,76 +4,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>My Courses - คอร์สของฉัน</title>
+
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --text-muted: #7f8c8d;
+        }
+
+        * {
+            font-family: 'Anuphan', sans-serif !important;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--secondary);
+        }
+
+        /* --- Navbar --- */
+        nav {
+            background: var(--white);
+            padding: 12px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-home {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-logout {
+            background: #ff7675;
+            color: white;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary);
+            border-left: 2px solid #eee;
+            padding-left: 15px;
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header-box {
+            margin-bottom: 35px;
+        }
+
+        .header-box h1 {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-box p {
+            color: var(--text-muted);
+        }
+
+        /* --- Grid Layout --- */
+        #myCoursesList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        /* --- Modern Course Card --- */
+        .course-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 25px;
+            flex-grow: 1;
+        }
+
+        .card-body h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--secondary);
+            line-height: 1.4;
+        }
+
+        /* --- Progress Styles --- */
+        .progress-item {
+            margin-bottom: 18px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .bar-bg {
+            background: #edf2f7;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
+
+        .fill-learn {
+            background: var(--success);
+        }
+
+        .fill-quiz {
+            background: var(--primary);
+        }
+
+        /* --- Card Footer --- */
+        .card-footer {
+            padding: 0 25px 25px 25px;
+        }
+
+        .btn-continue {
+            width: 100%;
+            padding: 14px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-continue:hover {
+            background: var(--primary);
+        }
+
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+    </style>
 </head>
 
-<body style="margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6;">
+<body>
 
-    <nav
-        style="background: #2c3e50; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <button onclick="window.location.href='index.html'"
-                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+    <nav>
+        <div class="nav-left">
+            <button onclick="window.location.href='index.html'" class="btn-nav btn-home">
                 🏠 หน้าแรก
             </button>
-            <h2 style="margin: 0 0 0 15px; font-size: 1.2rem; border-left: 1px solid #5d6d7e; padding-left: 15px;">
-                คอร์สของฉัน</h2>
+            <span class="nav-title">คอร์สของฉัน</span>
         </div>
 
         <div style="display: flex; align-items: center; gap: 15px;">
-            <span id="navUserName" style="font-weight: bold; color: #f1c40f;"></span>
-            <button onclick="logout()"
-                style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                ออกจากระบบ
-            </button>
+            <span id="navUserName" style="font-weight: 600; color: var(--primary);"></span>
+            <button onclick="logout()" class="btn-nav btn-logout">ออกจากระบบ</button>
         </div>
     </nav>
 
-    <div style="padding: 40px 20px; max-width: 1100px; margin: auto;">
-        <div style="margin-bottom: 30px;">
-            <h1 style="color: #2c3e50; margin: 0;">📚 คอร์สที่คุณกำลังเรียน</h1>
-            <p style="color: #7f8c8d;">ติดตามความคืบหน้าและเรียนต่อจากที่ค้างไว้ได้ที่นี่</p>
+    <div class="container">
+        <div class="header-box">
+            <h1>📚 คอร์สที่คุณกำลังเรียน</h1>
+            <p>ติดตามความคืบหน้าและพัฒนาทักษะของคุณต่อได้เลย</p>
         </div>
 
-        <div id="myCoursesList"
-            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
-            <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #95a5a6;">
-                กำลังโหลดข้อมูลคอร์สของคุณ...
+        <div id="myCoursesList">
+            <div class="empty-state">
+                <p style="color: var(--text-muted);">กำลังโหลดข้อมูลคอร์สของคุณ...</p>
             </div>
         </div>
     </div>
 
     <script>
-        const API_BASE_URL = "http://localhost:3000/api"; // ปรับให้ตรงกับเส้นทางหลักของคุณ
+        const API_BASE_URL = "http://localhost:3000/api";
 
-        // 1. ตรวจสอบ Login ทันที
+        // 1. ตรวจสอบ Login
         const userData = localStorage.getItem("user");
         if (!userData) {
             window.location.href = "login.html";
         } else {
             const user = JSON.parse(userData);
-            document.getElementById("navUserName").innerText = "สวัสดี, " + (user.name || "Member");
+            document.getElementById("navUserName").innerText = (user.name || "Member");
         }
 
-        // 2. ฟังก์ชันโหลดข้อมูลคอร์ส
+        // 2. โหลดคอร์ส (Logic เดิมแต่เปลี่ยนการสร้าง HTML)
         async function loadMyCourses() {
             const user = JSON.parse(localStorage.getItem("user"));
             if (!user) return;
 
             try {
-                // เรียก API ที่จัดการ Route /my-courses/:userId
-                const response = await fetch(`http://localhost:3000/api/progress/my-courses/${user.id}`);
+                const response = await fetch(`${API_BASE_URL}/progress/my-courses/${user.id}`);
                 const courses = await response.json();
-
                 const list = document.getElementById("myCoursesList");
                 list.innerHTML = "";
 
                 if (!courses || courses.length === 0) {
                     list.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: white; border-radius: 15px;">
-                            <p style="font-size: 1.2rem; color: #7f8c8d;">คุณยังไม่ได้ลงทะเบียนคอร์สใดๆ</p>
-                            <button onclick="window.location.href='index.html'" style="margin-top:15px; padding:10px 20px; background:#3498db; color:white; border:none; border-radius:5px; cursor:pointer;">ไปดูคอร์สทั้งหมด</button>
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            <p style="font-size: 1.1rem; color: var(--text-muted);">คุณยังไม่ได้ลงทะเบียนคอร์สใดๆ</p>
+                            <button onclick="window.location.href='index.html'" 
+                                    style="margin-top:20px; padding:12px 25px; background:var(--primary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:600;">
+                                ไปเลือกดูคอร์สที่น่าสนใจ
+                            </button>
                         </div>`;
                     return;
                 }
@@ -87,62 +285,55 @@
                     const quizPercent = total > 0 ? Math.round((passed / total) * 100) : 0;
 
                     const card = document.createElement("div");
-                    card.style = "background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: transform 0.3s; display: flex; flex-direction: column; border: 1px solid #eee;";
-
-                    // Hover effect
-                    card.onmouseover = () => card.style.transform = "translateY(-5px)";
-                    card.onmouseout = () => card.style.transform = "translateY(0)";
-
+                    card.className = "course-card";
                     card.innerHTML = `
-                        <div style="padding: 25px; flex-grow: 1;">
-                            <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 1.3rem;">${course.title}</h3>
+                        <div class="card-body">
+                            <h3>${course.title}</h3>
                             
-                            <div style="margin-bottom: 20px;">
-                                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
-                                    <span style="color: #7f8c8d;">📺 ความคืบหน้าการเรียน</span>
-                                    <span style="font-weight:bold; color:#27ae60;">${learnPercent}%</span>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <span style="color: var(--text-muted);"> 📖 เรียนไปแล้ว</span>
+                                    <span style="color: var(--success);">${learnPercent}%</span>
                                 </div>
-                                <div style="width: 100%; background: #ecf0f1; height: 8px; border-radius: 10px; overflow: hidden;">
-                                    <div style="width: ${learnPercent}%; background: #2ecc71; height: 100%; border-radius: 10px;"></div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill fill-learn" style="width: ${learnPercent}%"></div>
                                 </div>
                             </div>
 
-                            <div style="margin-bottom: 20px;">
-                                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
-                                    <span style="color: #7f8c8d;">📝 ผลการทดสอบ</span>
-                                    <span style="font-weight:bold; color:#3498db;">${quizPercent}%</span>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <span style="color: var(--text-muted);">✅ สอบผ่านแล้ว</span>
+                                    <span style="color: var(--primary);">${quizPercent}%</span>
                                 </div>
-                                <div style="width: 100%; background: #ecf0f1; height: 8px; border-radius: 10px; overflow: hidden;">
-                                    <div style="width: ${quizPercent}%; background: #3498db; height: 100%; border-radius: 10px;"></div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill fill-quiz" style="width: ${quizPercent}%"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div style="padding: 0 25px 25px 25px;">
-                            <button onclick="window.location.href='course.html?id=${course.id}'" 
-                                style="width:100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight:bold; transition: background 0.2s;">
-                                เข้าสู่บทเรียนต่อ 🚀
+                        <div class="card-footer">
+                            <button class="btn-continue" onclick="window.location.href='course.html?id=${course.id}'">
+                                เรียนต่อจากที่ค้างไว้
                             </button>
                         </div>
                     `;
                     list.appendChild(card);
                 });
             } catch (err) {
-                console.error("Error loading courses:", err);
-                document.getElementById("myCoursesList").innerHTML = "<div style='grid-column: 1/-1; color: red; text-align: center;'>ไม่สามารถโหลดข้อมูลได้ในขณะนี้</div>";
+                console.error("Error:", err);
+                document.getElementById("myCoursesList").innerHTML = "<div class='empty-state' style='color: #ff7675;'>เกิดข้อผิดพลาดในการโหลดข้อมูล</div>";
             }
         }
 
-        // 3. ฟังก์ชัน Logout
+        // 3. Logout (คงเดิม)
         function logout() {
             Swal.fire({
                 title: 'ออกจากระบบ?',
                 text: "คุณต้องการออกจากระบบใช่หรือไม่",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#95a5a6',
-                confirmButtonText: 'ใช่, ออกจากระบบ',
+                confirmButtonColor: '#ff7675',
+                confirmButtonText: 'ยืนยัน',
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -152,7 +343,6 @@
             });
         }
 
-        // เริ่มต้นโหลดข้อมูล
         window.onload = loadMyCourses;
     </script>
 </body>

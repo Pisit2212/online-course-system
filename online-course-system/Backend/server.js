@@ -38,6 +38,31 @@ app.post("/api/add-quiz", (req, res) => {
     });
 });
 
+// Route สำหรับแก้ไขบทเรียน (Update Lesson)
+app.put('/api/lessons/:id', (req, res) => {
+    const lessonId = req.params.id;
+    const { title, video_url } = req.body;
+
+    // ตรวจสอบว่าส่งค่ามาครบไหม
+    if (!title || !video_url) {
+        return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
+    }
+
+    const sql = "UPDATE lessons SET title = ?, video_url = ? WHERE id = ?";
+    db.query(sql, [title, video_url, lessonId], (err, result) => {
+        if (err) {
+            console.error("DB Error:", err);
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "ไม่พบบทเรียนที่ต้องการแก้ไข" });
+        }
+
+        res.json({ message: "แก้ไขบทเรียนสำเร็จ!" });
+    });
+});
+
 
 app.get("/", (req, res) => res.send("Online Course API is running smoothly!"));
 app.use((err, req, res, next) => {

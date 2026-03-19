@@ -4,66 +4,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Course Practice | หน้าแรก</title>
+    <title>Online Course | หน้าแรก</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --text-muted: #7f8c8d;
+            --white: #ffffff;
+            --radius: 15px;
+        }
+
+        * {
+            font-family: 'Anuphan', sans-serif !important;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        /* --- Navbar --- */
+        nav {
+            background: var(--white);
+            padding: 12px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-home {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-my-course {
+            background: #ecf0f1;
+            color: var(--secondary-color);
+        }
+
+        .btn-logout {
+            background: #ff7675;
+            color: white;
+            margin-left: 15px;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-section h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        /* --- Course Grid (ต้องแก้ใน app.js ให้ render card ตามโครงสร้างนี้ด้วย) --- */
+        #courseList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        /* --- Instructor Panel --- */
+        #instructorPanel {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-top: 60px;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn-action {
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .btn-create {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-update {
+            background: #f39c12;
+            color: white;
+        }
+
+        /* สไตล์คอร์สการ์ดเบื้องต้น (เผื่อไว้ใน app.js) */
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
 </head>
 
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f8f9fa;">
+<body>
 
-    <nav
-        style="background: #2c3e50; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-        <div style="display: flex; gap: 10px;">
-            <button onclick="window.location.href='index.html'"
-                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px;">
-                🏠 หน้าแรก
+    <nav>
+        <div class="nav-left">
+            <button onclick="window.location.href='index.html'" class="btn-nav btn-home">
+                 หน้าแรก
             </button>
-
-            <button onclick="window.location.href='my-courses.html'"
-                style="background: #95a5a6; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                📚 คอร์สของฉัน
+            <button onclick="window.location.href='my-courses.html'" class="btn-nav btn-my-course">
+                 คอร์สของฉัน
             </button>
         </div>
 
         <div style="display: flex; align-items: center;">
-            <span id="navUserName" style="font-weight: bold; margin-right: 15px;"></span>
-            <button onclick="logout()"
-                style="background: #e74c3c; color: white; border: none; padding: 7px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                ออกจากระบบ
+            <span id="navUserName" style="font-weight: 600; color: var(--primary-color);"></span>
+            <button onclick="logout()" class="btn-nav btn-logout">
+                 ออกจากระบบ
             </button>
         </div>
     </nav>
 
-    <div
-        style="max-width: 1000px; margin: 30px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-
-        <h1 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;">รายการคอร์สเรียน (Course List)
-        </h1>
-
-        <div id="courseList" style="margin-top: 20px;">
-            <p style="color: #666;">กำลังโหลดคอร์สเรียน...</p>
+    <div class="container">
+        <div class="welcome-section">
+            <h1>สำรวจคอร์สเรียนที่น่าสนใจ</h1>
+            <p style="color: var(--text-muted);">เริ่มต้นเส้นทางการเรียนรู้ของคุณได้แล้ววันนี้</p>
         </div>
 
-        <div id="instructorPanel"
-            style="display: none; background: #fdfdfd; padding: 25px; border: 2px dashed #3498db; border-radius: 10px; margin-top: 40px;">
-            <h2 style="color: #2980b9; margin-top: 0;">🛠️ สำหรับผู้สอน: สร้าง/แก้ไขคอร์ส</h2>
+        <div id="courseList">
+            <p style="text-align: center; color: var(--text-muted);">กำลังโหลดคอร์สเรียน...</p>
+        </div>
 
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <input id="title" placeholder="ชื่อคอร์ส (Course Title)"
-                    style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;">
+        <div id="instructorPanel" style="display: none;">
+            <div class="panel-title">
+                <span>เครื่องมือผู้สอน: จัดการคอร์ส</span>
+            </div>
 
-                <textarea id="description" placeholder="รายละเอียดคอร์ส (Course Description)"
-                    style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; height: 100px; font-size: 16px; font-family: inherit;"></textarea>
+            <div style="display: flex; flex-direction: column;">
+                <input id="title" placeholder="ชื่อคอร์ส (Course Title)">
+                <textarea id="description" placeholder="รายละเอียดคอร์ส (Course Description)"></textarea>
 
                 <div style="display: flex; gap: 10px;">
-                    <button onclick="createCourse()"
-                        style="background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1;">
-                        ➕ สร้างคอร์สใหม่
+                    <button onclick="createCourse()" class="btn-action btn-create" style="flex: 1;">
+                        <i class="fa-solid fa-plus"></i> สร้างคอร์สใหม่
                     </button>
-                    <button id="updateBtn"
-                        style="background: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; display: none;">
-                        💾 อัปเดตข้อมูลคอร์ส
+                    <button id="updateBtn" class="btn-action btn-update" style="flex: 1; display: none;">
+                         อัปเดตข้อมูลคอร์ส
                     </button>
                 </div>
             </div>
@@ -71,43 +240,34 @@
     </div>
 
     <script>
+        // --- LOGIC คงเดิมจากของคุณ ---
         window.onload = function () {
             const userData = localStorage.getItem("user");
-
-            // 1. ตรวจสอบการ Login
             if (!userData) {
                 window.location.href = "login.html";
                 return;
             }
-
             const currentUser = JSON.parse(userData);
-
-            // 2. แสดงชื่อผู้ใช้ใน Navbar
             const nameDisplay = document.getElementById("navUserName");
             if (nameDisplay) {
-                nameDisplay.innerText = "สวัสดี, " + (currentUser.name || "Member");
+                nameDisplay.innerText = (currentUser.name || "Member");
             }
-
-            // 3. เช็ค Role ถ้าเป็น instructor ให้แสดงเมนูสร้างคอร์ส
             if (currentUser.role === "instructor") {
                 const panel = document.getElementById("instructorPanel");
                 if (panel) panel.style.display = "block";
             }
-
-            // 4. เรียกฟังก์ชันโหลดคอร์สจาก app.js
             if (typeof loadCourse === "function") {
                 loadCourse();
             }
         };
 
-        // ฟังก์ชัน Logout พร้อม SweetAlert2
         function logout() {
             Swal.fire({
                 title: 'ออกจากระบบ?',
                 text: "คุณต้องการออกจากระบบใช่หรือไม่",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
+                confirmButtonColor: '#ff7675',
                 cancelButtonColor: '#95a5a6',
                 confirmButtonText: 'ยืนยัน',
                 cancelButtonText: 'ยกเลิก'
@@ -118,55 +278,37 @@
                 }
             });
         }
-        let currentEditingCourseId = null; // เก็บ ID คอร์สที่กำลังแก้ไข
 
-        // ฟังก์ชันสำหรับเตรียมฟอร์มเพื่อแก้ไข (จะถูกเรียกจาก app.js)
+        // Logic ส่วน PrepareEdit และ SaveUpdate คงเดิม...
         function prepareEditCourse(id, title, description) {
-            currentEditingCourseId = id;
-
-            // 1. เอาข้อมูลไปใส่ใน Input
             document.getElementById("title").value = title;
             document.getElementById("description").value = description;
-
-            // 2. สลับปุ่ม (ซ่อนปุ่มสร้าง แสดงปุ่มอัปเดต)
             document.querySelector("button[onclick='createCourse()']").style.display = "none";
             const updateBtn = document.getElementById("updateBtn");
             updateBtn.style.display = "block";
-
-            // 3. กำหนดคำสั่งให้ปุ่มอัปเดต
-            updateBtn.onclick = function () {
-                saveCourseUpdate(id);
-            };
-
-            // 4. เลื่อนหน้าจอลงมาที่ฟอร์ม
+            updateBtn.onclick = () => saveCourseUpdate(id);
             document.getElementById("instructorPanel").scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ฟังก์ชันส่งข้อมูลที่แก้แล้วไป Backend
         function saveCourseUpdate(id) {
             const title = document.getElementById("title").value;
             const description = document.getElementById("description").value;
-
             if (!title || !description) {
                 Swal.fire('กรุณากรอกข้อมูลให้ครบ', '', 'warning');
                 return;
             }
-
             fetch(`http://localhost:3000/api/courses/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title, description })
             })
                 .then(res => res.json())
-                .then(data => {
+                .then(() => {
                     Swal.fire('สำเร็จ!', 'แก้ไขคอร์สเรียบร้อยแล้ว', 'success').then(() => {
-                        location.reload(); // รีโหลดหน้าเพื่อแสดงข้อมูลใหม่
+                        location.reload();
                     });
                 })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire('Error', 'ไม่สามารถแก้ไขข้อมูลได้', 'error');
-                });
+                .catch(err => Swal.fire('Error', 'ไม่สามารถแก้ไขได้', 'error'));
         }
     </script>
 </body>
