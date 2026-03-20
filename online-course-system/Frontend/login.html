@@ -152,10 +152,9 @@
     </div>
 
     <script>
-        // --- 1. ระบบสลับการมองเห็นรหัสผ่าน ---
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#password');
-        const eyeIcon = document.querySelector('#eyeIcon');
+        const eyeIcon = document.querySelector('#eyeIcon'); // icon ลูกตาไว้เปิดดู password
 
         togglePassword.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -168,14 +167,13 @@
             }
         });
 
-        // --- 2. รองรับการกดปุ่ม Enter เพื่อ Login ---
+        // ทำให้สามารถกดปุ่ม Enter เพื่อ Login
         document.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 login();
             }
         });
 
-        // --- 3. ระบบ Login ---
         function login() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
@@ -185,10 +183,8 @@
                 return;
             }
 
-            // แสดง Loading ระหว่างรอ
             Swal.showLoading();
 
-            // เปลี่ยน URL ตรงนี้ให้ตรงกับ Backend ของคุณ (ปกติคือ /api/login)
             fetch("http://localhost:3000/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -197,13 +193,12 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.user) {
-                        // เก็บข้อมูล User ลง LocalStorage
                         localStorage.setItem("user", JSON.stringify(data.user));
 
                         Swal.fire({
                             icon: 'success',
                             title: 'เข้าสู่ระบบสำเร็จ',
-                            text: 'ยินดีต้อนรับกลับมา, ' + (data.user.name || 'คุณผู้ใช้งาน'),
+                            text: 'ยินดีต้อนรับ! , ' + 'คุณ ' + (data.user.name || 'คุณผู้ใช้งาน'),
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {

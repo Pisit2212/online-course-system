@@ -14,21 +14,19 @@ const db = mysql.createConnection({
     database: "webdb"
 });
 
-// นำเข้า Routes (ส่ง db เข้าไปด้วยทุกไฟล์)
 const authRoutes = require("./routes/auth");
 const courseRoutes = require("./routes/courses");
 const lessonRoutes = require("./routes/lessons");
 const progressRoutes = require("./routes/progress");
 const quizRoutes = require("./routes/quizzes");
 
-// ใช้งาน Routes แบ่งตามหมวดหมู่
 app.use("/api/auth", authRoutes(db));
 app.use("/api/courses", courseRoutes(db));
 app.use("/api/lessons", lessonRoutes(db));
 app.use("/api/quizzes", quizRoutes(db));
 app.use("/api/progress", progressRoutes(db));
 
-// สำหรับเพิ่มข้อสอบ (Instructor)
+// เพิ่มข้อสอบ
 app.post("/api/add-quiz", (req, res) => {
     const { lesson_id, question, option1, option2, option3, option4, answer } = req.body;
     const sql = "INSERT INTO quizzes (lesson_id, question, option1, option2, option3, option4, answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -38,12 +36,11 @@ app.post("/api/add-quiz", (req, res) => {
     });
 });
 
-// Route สำหรับแก้ไขบทเรียน (Update Lesson)
+// แก้ไขบทเรียน
 app.put('/api/lessons/:id', (req, res) => {
     const lessonId = req.params.id;
     const { title, video_url } = req.body;
 
-    // ตรวจสอบว่าส่งค่ามาครบไหม
     if (!title || !video_url) {
         return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
     }

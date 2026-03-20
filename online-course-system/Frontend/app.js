@@ -1,13 +1,8 @@
-// กำหนด Base URL ไว้ที่เดียว แก้ไขง่าย
 const API_BASE_URL = "http://localhost:3000/api";
-
-// ดึงข้อมูล User ไว้ใช้ทั่วไฟล์
 const currentUser = JSON.parse(localStorage.getItem("user"));
 const userId = currentUser ? currentUser.id : null;
 
-// ฟังก์ชันโหลดคอร์สทั้งหมด
 function loadCourse() {
-    // แก้ไข URL: เพิ่ม /api/courses
     fetch(`${API_BASE_URL}/courses`)
         .then(res => res.json())
         .then(data => {
@@ -18,23 +13,21 @@ function loadCourse() {
                 courseList.innerHTML = "<p>ยังไม่มีคอร์สในระบบ</p>";
                 return;
             }
-
             data.forEach(course => {
                 const div = document.createElement("div");
                 div.style = "border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);";
-
                 let adminButtons = "";
                 const isOwner = userId && course.instructor_id && Number(userId) === Number(course.instructor_id);
 
                 if (isOwner) {
                     adminButtons = `
                         <button onclick="editCourse(${course.id})" style="background-color: #ffc107; border: none; padding: 5px 12px; cursor: pointer; border-radius: 4px; margin-left: 5px; font-weight: bold;">แก้ไข</button>
-                        <button onclick="deleteCourse(${course.id})" style="background-color: #dc3545; color: white; border: none; padding: 5px 12px; cursor: pointer; border-radius: 4px; margin-left: 5px; font-weight: bold;">ลบ</button>
-                    `;
+                        <button onclick="deleteCourse(${course.id})" style="background-color: #dc3545; 
+                        color: white; border: none; padding: 5px 12px; cursor: pointer; border-radius: 4px; 
+                        margin-left: 5px; font-weight: bold;">ลบ</button>`;
                 }
 
                 const mainBtnText = isOwner ? "⚙️ จัดการบทเรียน" : "📖 เข้าเรียน";
-
                 div.innerHTML = `
                     <h3 style="margin-top: 0; color: #2c3e50;">${course.title}</h3>
                     <p style="color: #7f8c8d;">${course.description}</p>
@@ -44,15 +37,13 @@ function loadCourse() {
                             ${mainBtnText}
                         </button>
                         ${adminButtons} 
-                    </div>
-                `;
+                    </div>`;
                 courseList.appendChild(div);
             });
         })
         .catch(err => console.error("Error loading courses:", err));
 }
 
-// สั่งให้โหลดทันทีที่เปิดหน้า
 loadCourse();
 
 function createCourse() {
@@ -72,7 +63,6 @@ function createCourse() {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
-            // แก้ไข URL: ใช้ API_BASE_URL
             fetch(`${API_BASE_URL}/courses`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -116,22 +106,16 @@ function editCourse(id) {
                 showConfirmButton: false
             });
 
-            // --- นี่คือส่วนที่ 2 ที่ต้องเพิ่ม/แก้ไข ---
-
-            // 1. ซ่อนปุ่ม "สร้างคอร์สใหม่"
             const createBtn = document.querySelector("button[onclick='createCourse()']");
             if (createBtn) createBtn.style.display = "none";
 
-            // 2. แสดงปุ่ม "อัปเดตข้อมูลคอร์ส"
             const updateBtn = document.getElementById("updateBtn");
             if (updateBtn) {
-                updateBtn.style.display = "block"; // แสดงปุ่มสีเหลือง
+                updateBtn.style.display = "block";
                 updateBtn.onclick = function () {
                     updateCourse(id);
                 };
             }
-
-            // เลื่อนหน้าจอลงมา
             if (updateBtn) {
                 updateBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
@@ -157,7 +141,6 @@ function updateCourse(id) {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
-            // แก้ไข URL: ใช้ API_BASE_URL
             fetch(`${API_BASE_URL}/courses/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -171,15 +154,14 @@ function updateCourse(id) {
                         text: 'ข้อมูลคอร์สถูกแก้ไขเรียบร้อยแล้ว',
                         showConfirmButton: false,
                         timer: 1500
-                    })// เพิ่มเข้าไปข้างใน .then หลังจาก Swal แจ้งว่าสำเร็จ
+                    })
                         .then(() => {
                             document.getElementById("title").value = "";
                             document.getElementById("description").value = "";
 
-                            // สลับปุ่มกลับมาโหมดสร้างปกติ
-                            document.getElementById("updateBtn").style.display = "none"; // ซ่อนปุ่มอัปเดต
+                            document.getElementById("updateBtn").style.display = "none";
                             const createBtn = document.querySelector("button[onclick='createCourse()']");
-                            if (createBtn) createBtn.style.display = "block"; // โชว์ปุ่มสร้างใหม่
+                            if (createBtn) createBtn.style.display = "block";
 
                             loadCourse();
                         });
@@ -204,7 +186,6 @@ function deleteCourse(id) {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
-            // แก้ไข URL: ใช้ API_BASE_URL
             fetch(`${API_BASE_URL}/courses/${id}`, {
                 method: 'DELETE',
             })

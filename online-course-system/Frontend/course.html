@@ -21,11 +21,9 @@
 
         body {
             background-color: #f8f9fa;
-            /* สีเทาอ่อนแบบหน้า Register */
             color: #2c3e50;
         }
 
-        /* --- Navbar ใหม่: สะอาดและดูแพงขึ้น --- */
         nav {
             background: #ffffff;
             padding: 12px 5%;
@@ -78,7 +76,6 @@
             color: #3498db;
         }
 
-        /* --- กล่องเนื้อหาหลัก --- */
         .container {
             max-width: 900px;
             margin: 30px auto;
@@ -101,7 +98,6 @@
             margin-bottom: 25px;
         }
 
-        /* --- ปุ่ม Enroll & บันทึกการเรียน --- */
         #enrollBtn,
         .btn-finish {
             width: 100%;
@@ -125,7 +121,6 @@
             color: white;
         }
 
-        /* --- Progress Bar สไตล์ Minimal --- */
         .progress-section {
             background: #fdfdfd;
             border: 1px solid #f1f2f6;
@@ -164,7 +159,6 @@
             background: #2ecc71;
         }
 
-        /* --- รายการบทเรียน --- */
         .lesson-header {
             border-left: 5px solid #3498db;
             padding-left: 15px;
@@ -173,7 +167,6 @@
             color: #2c3e50;
         }
 
-        /* --- Admin Panel --- */
         #adminPanel {
             margin-top: 50px;
             padding: 30px;
@@ -202,7 +195,6 @@
             font-weight: 600;
         }
 
-        /* --- สไตล์สำหรับแบบทดสอบ --- */
         .quiz-option {
             display: flex;
             align-items: center;
@@ -327,7 +319,6 @@
             </div>
         </div>
 
-
         <script>
             const API_BASE_URL = "http://localhost:3000/api";
             const params = new URLSearchParams(window.location.search);
@@ -401,17 +392,14 @@
                             div.appendChild(info);
 
                             if (window.currentCourseOwnerId == userId) {
-                                // 1. เพิ่มปุ่มแก้ไข (สีเหลือง)
                                 const editBtn = document.createElement("button");
                                 editBtn.innerText = "แก้ไข";
                                 editBtn.style = "background:#f1c40f; color:black; border:none; border-radius:4px; padding:5px 10px; cursor:pointer; margin-left:10px; font-weight:bold;";
                                 editBtn.onclick = (e) => {
-                                    e.stopPropagation(); // กันไม่ให้มันไปกดเล่นวิดีโอตอนจะกดแก้
+                                    e.stopPropagation();  //กันไม่ให้มันไปกดเล่นวิดีโอตอนจะกดแก้
                                     editLesson(lesson.id, lesson.title, lesson.video_url);
                                 };
                                 div.appendChild(editBtn);
-
-                                // 2. ปุ่มลบเดิม (สีแดง)
                                 const delBtn = document.createElement("button");
                                 delBtn.innerText = "ลบ";
                                 delBtn.style = "background:#ff4d4d; color:white; border:none; border-radius:4px; padding:5px 10px; cursor:pointer; margin-left:10px;";
@@ -492,8 +480,6 @@
 
             function markAsDone() {
                 const btn = document.getElementById("completeBtn");
-
-                // 1. เปลี่ยนสถานะปุ่มเป็นกำลังบันทึก (ป้องกันการกดซ้ำ)
                 btn.innerText = "⏳ กำลังบันทึก...";
                 btn.disabled = true;
 
@@ -507,12 +493,11 @@
                         return res.json();
                     })
                     .then(() => {
-                        // 2. เมื่อสำเร็จ: เปลี่ยนหน้าตาปุ่มทันทีโดยไม่ต้องรีโหลดหน้า
                         btn.innerText = "🎉 เรียนบทนี้เสร็จแล้ว";
-                        btn.style.background = "#6c757d"; // สีเทา
+                        btn.style.background = "#6c757d";
                         btn.style.color = "white";
                         btn.style.cursor = "default";
-                        btn.onclick = null; // ถอด event คลิกออก
+                        btn.onclick = null;
 
                         Swal.fire({
                             icon: 'success',
@@ -521,10 +506,8 @@
                             timer: 1500,
                             showConfirmButton: false
                         });
-
-                        // 3. อัปเดตส่วนอื่นๆ ที่เกี่ยวข้อง
-                        updateProgressBar(); // อัปเดตหลอดเปอร์เซ็นต์ข้างบน
-                        loadLessons();       // อัปเดตติ๊กถูก ✅ ในรายการบทเรียนด้านล่าง
+                        updateProgressBar();
+                        loadLessons(); 
                     })
                     .catch(err => {
                         console.error(err);
@@ -534,31 +517,24 @@
                     });
             }
 
-            // ในไฟล์ course.html
             function updateProgressBar() {
-                // มั่นใจว่าใช้ userId จาก localStorage โดยตรงเพื่อความชัวร์
                 const currentUid = JSON.parse(localStorage.getItem("user")).id;
 
                 fetch(`${API_BASE_URL}/progress/${currentUid}/${courseId}`)
                     .then(res => res.json())
                     .then(data => {
-                        console.log("Check Progress Data:", data); // ดูใน F12 ว่า passed มาไหม
+                        console.log("Check Progress Data:", data);
 
                         const total = data.total || 0;
                         const completed = data.completed || 0;
                         const passed = data.passed || 0;
-
-                        // คำนวณ %
                         const learnP = total > 0 ? (completed / total) * 100 : 0;
                         const quizP = total > 0 ? (passed / total) * 100 : 0;
-
-                        // อัปเดตแถบสีเขียว (การเรียน)
                         const progressBar = document.getElementById("progressBar");
                         const percentText = document.getElementById("percentText");
                         if (progressBar) progressBar.style.width = learnP + "%";
                         if (percentText) percentText.innerText = Math.round(learnP);
 
-                        // อัปเดตแถบสีฟ้า (ข้อสอบ)
                         const quizBar = document.getElementById("quizProgressBar");
                         const quizText = document.getElementById("quizPercentText");
                         if (quizBar) quizBar.style.width = quizP + "%";
@@ -584,7 +560,7 @@
                             return;
                         }
 
-                        // ปรับปรุงการเช็ค Array ของคำถาม (รองรับทั้ง data.questions และ data ที่เป็น Array เลย)
+                        // ปรับปรุงการเช็ค Array ของคำถามให้รองรับทั้ง data.questions และ data ที่เป็น Array ด้วย
                         const questions = data.questions || (Array.isArray(data) ? data : []);
 
                         if (questions && questions.length > 0) {
@@ -626,7 +602,6 @@
                     if (!sel) {
                         unanswered++;
                     } else {
-                        // ใช้ == เพื่อให้เทียบ "4" กับ 4 ได้
                         if (sel.value == q.answer) {
                             score++;
                         }
@@ -638,7 +613,6 @@
                 }
 
                 if (score === currentQuizData.length) {
-                    // ใช้ userId (ที่มีการประกาศไว้แล้วที่บรรทัด 122 ในไฟล์ของคุณ)
                     fetch(`${API_BASE_URL}/progress/save-quiz-progress`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -649,21 +623,15 @@
                         })
                     })
                         .then(res => res.json())
-                        // ค้นหาช่วงบรรทัดที่ 269 ในไฟล์ของคุณ
                         .then(data => {
-                            Swal.fire("เย้!", "คุณสอบผ่านทุกข้อแล้ว!", "success").then(() => {
-                                // 1. ปิดส่วนที่ทำข้อสอบ และแสดงข้อความว่าผ่านแล้วทันที
+                            Swal.fire("ยินดีด้วย!", "คุณสอบผ่านทุกข้อแล้ว!", "success").then(() => {
                                 const content = document.getElementById("quizContent");
                                 const submitBtn = document.getElementById("submitQuizBtn");
                                 if (content) content.innerHTML = "<h4 style='color:green;'>✅ คุณสอบผ่านบทเรียนนี้แล้ว!</h4>";
                                 if (submitBtn) submitBtn.style.display = "none";
 
-                                // 2. อัปเดต Progress Bar และรายการบทเรียน (เติมติ๊กถูก)
                                 updateProgressBar();
                                 loadLessons();
-
-                                // (เลือกได้) ถ้าอยากให้ชัวร์ว่าข้อมูลสดใหม่จริงๆ จะใช้ location.reload() แบบเดิมก็ได้
-                                // location.reload(); 
                             });
                         })
                         .catch(err => {
@@ -708,22 +676,19 @@
                     reverseButtons: false
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // ส่งคำสั่งลบไปยัง Backend
                         fetch(`${API_BASE_URL}/lessons/${id}`, { method: "DELETE" })
                             .then(res => {
                                 if (!res.ok) throw new Error('ลบไม่สำเร็จ');
                                 return res.json();
                             })
                             .then(data => {
-                                // ✅ แสดงหน้าต่างสำเร็จ
                                 Swal.fire({
                                     title: 'ลบสำเร็จ!',
                                     text: 'บทเรียนและข้อมูลที่เกี่ยวข้องถูกลบแล้ว',
                                     icon: 'success',
-                                    timer: 1500, // แสดง 1.5 วินาทีแล้วหายไปเอง
+                                    timer: 1500,
                                     showConfirmButton: false
                                 }).then(() => {
-                                    // โหลดรายการบทเรียนใหม่และอัปเดต Progress Bar
                                     loadLessons();
                                     updateProgressBar();
                                 });
@@ -735,7 +700,7 @@
                     }
                 });
             }
-            // ฟังก์ชันดึงข้อมูลบทเรียนขึ้นมาบนฟอร์มเพื่อแก้ไข
+
             let editingLessonId = null;
 
             function editLesson(id, title, url) {
@@ -743,14 +708,12 @@
                 document.getElementById("lessonTitle").value = title;
                 document.getElementById("videoUrl").value = url;
 
-                // เปลี่ยนปุ่มบันทึกให้เป็นปุ่ม "ตกลงแก้ไข"
                 const btn = document.querySelector("button[onclick='addLesson()']");
                 if (btn) {
                     btn.innerText = "💾 ยืนยันการแก้ไขบทเรียน";
                     btn.style.background = "#27ae60";
                     btn.onclick = saveEditLesson;
                 }
-                // เลื่อนจอไปที่ฟอร์มแก้ไข
                 document.getElementById("adminPanel").scrollIntoView({ behavior: 'smooth' });
             }
 
@@ -796,7 +759,6 @@
                 });
             }
 
-            // เพิ่มฟังก์ชันใหม่ใน <script> ของ course.html
             function loadAdminQuizList(lessonId) {
                 if (!lessonId) return;
                 fetch(`${API_BASE_URL}/quizzes/${lessonId}`)
@@ -820,14 +782,13 @@
                     text: "เมื่อลบแล้วจะไม่สามารถกู้คืนข้อมูลข้อสอบนี้ได้!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#e74c3c', // สีแดง
-                    cancelButtonColor: '#95a5a6', // สีเทา
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#95a5a6',
                     confirmButtonText: 'ใช่, ลบทันที!',
                     cancelButtonText: 'ยกเลิก',
                     reverseButtons: false
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // ถ้ากดยืนยัน ให้ส่ง DELETE ไปที่ Backend
                         fetch(`${API_BASE_URL}/quizzes/${id}`, { method: "DELETE" })
                             .then(res => res.json())
                             .then(data => {
@@ -838,7 +799,6 @@
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
-                                // โหลดรายการข้อสอบใหม่ (ใช้ค่าจาก Dropdown ปัจจุบัน)
                                 loadAdminQuizList(document.getElementById("targetLessonId").value);
                             })
                             .catch(err => {
@@ -849,7 +809,6 @@
                 });
             }
 
-            // ฟังก์ชันเตรียมแก้ไข (ดึงค่าขึ้นฟอร์ม)
             let editingQuizId = null;
             function editQuiz(q) {
                 editingQuizId = q.id;
@@ -890,14 +849,13 @@
                     text: "คุณต้องการเข้าร่วมหลักสูตรนี้ใช่หรือไม่?",
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonColor: '#27ae60', // สีเขียวแบบปุ่ม Enroll
+                    confirmButtonColor: '#27ae60',
                     cancelButtonColor: '#95a5a6',
                     confirmButtonText: '✅ ตกลง, เริ่มเรียนเลย',
                     cancelButtonText: 'ยกเลิก',
                     reverseButtons: false
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // ถ้ากดยืนยัน ให้ส่งข้อมูลไปที่ Backend
                         fetch(`${API_BASE_URL}/progress/enroll`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
@@ -908,7 +866,6 @@
                                 return res.json();
                             })
                             .then(() => {
-                                // ✅ แสดงหน้าต่างสำเร็จก่อน Refresh
                                 Swal.fire({
                                     title: 'ลงทะเบียนสำเร็จ!',
                                     text: 'ขอให้สนุกกับการเรียนรู้ครับ 🚀',
@@ -916,7 +873,7 @@
                                     timer: 2000,
                                     showConfirmButton: false
                                 }).then(() => {
-                                    location.reload(); // รีโหลดหน้าจอเพื่อเข้าสู่โหมดการเรียน
+                                    location.reload();
                                 });
                             })
                             .catch(err => {
@@ -938,7 +895,6 @@
                 });
             }
 
-            // --- เพิ่มคำเตือน Logout ---
             function logout() {
                 Swal.fire({
                     title: 'ออกจากระบบ?',

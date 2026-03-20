@@ -89,7 +89,6 @@
             transform: translateY(-1px);
         }
 
-        /* --- Main Container --- */
         .container {
             max-width: 1100px;
             margin: 40px auto;
@@ -108,7 +107,6 @@
             margin-bottom: 10px;
         }
 
-        /* --- Course Grid (ต้องแก้ใน app.js ให้ render card ตามโครงสร้างนี้ด้วย) --- */
         #courseList {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -116,7 +114,6 @@
             margin-top: 20px;
         }
 
-        /* --- Instructor Panel --- */
         #instructorPanel {
             background: var(--white);
             padding: 35px;
@@ -173,7 +170,6 @@
             color: white;
         }
 
-        /* สไตล์คอร์สการ์ดเบื้องต้น (เผื่อไว้ใน app.js) */
         .course-card {
             background: white;
             border-radius: 15px;
@@ -240,7 +236,6 @@
     </div>
 
     <script>
-        // --- LOGIC คงเดิมจากของคุณ ---
         window.onload = function () {
             const userData = localStorage.getItem("user");
             if (!userData) {
@@ -279,7 +274,6 @@
             });
         }
 
-        // Logic ส่วน PrepareEdit และ SaveUpdate คงเดิม...
         function prepareEditCourse(id, title, description) {
             document.getElementById("title").value = title;
             document.getElementById("description").value = description;

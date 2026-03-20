@@ -177,7 +177,6 @@
     </div>
 
     <script>
-        // --- 1. ระบบสลับการมองเห็นรหัสผ่าน ---
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#password');
         const eyeIcon = document.querySelector('#eyeIcon');
@@ -190,26 +189,21 @@
                 : "https://cdn-icons-png.flaticon.com/512/565/565655.png";
         });
 
-        // --- ฟังก์ชันเช็คความถูกต้องของ Email ---
         function validateEmail(email) {
-            // รูปแบบ: ตัวอักษร@ตัวอักษร.ตัวอักษร
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // เช็คว่า Email เป็น @ จริงมั้ย
             return re.test(email);
         }
 
-        // --- 2. ระบบ Register ---
         function register() {
             const name = document.getElementById("name").value.trim();
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value.trim();
             const role = document.getElementById("role").value;
 
-            // 1. ตรวจสอบข้อมูลว่าง
             if (!name || !email || !password || !role) {
                 return Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
             }
 
-            // 2. ตรวจสอบรูปแบบ Email (เพิ่มใหม่ ✨)
             if (!validateEmail(email)) {
                 return Swal.fire({
                     icon: 'error',
@@ -219,7 +213,6 @@
                 });
             }
 
-            // 3. ตรวจสอบความยาวรหัสผ่าน
             if (password.length < 6) {
                 return Swal.fire('รหัสผ่านสั้นเกินไป', 'กรุณาตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร', 'info');
             }

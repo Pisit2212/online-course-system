@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-    // ดึงคอร์สทั้งหมด
     router.get("/", (req, res) => {
         const sql = `SELECT courses.*, users.name AS instructor_name FROM courses 
                      LEFT JOIN users ON courses.instructor_id = users.id`;
@@ -12,7 +11,6 @@ module.exports = (db) => {
         });
     });
 
-    // ดึงคอร์สเดียว
     router.get("/:id", (req, res) => {
         const sql = "SELECT * FROM courses WHERE id = ?";
         db.query(sql, [req.params.id], (err, result) => {
@@ -21,7 +19,6 @@ module.exports = (db) => {
         });
     });
 
-    // ส่วน สร้าง/แก้ไข/ลบ คอร์ส (คงไว้เหมือนเดิม)
     router.put("/:id", (req, res) => {
         const { title, description } = req.body;
         const sql = "UPDATE courses SET title = ?, description = ? WHERE id = ?";
@@ -45,11 +42,11 @@ module.exports = (db) => {
             res.json({ message: 'Deleted' });
         });
     });
-    // ในไฟล์ routes/courses.js หรือไฟล์ที่เกี่ยวข้อง
+    
     router.post("/complete-lesson", (req, res) => {
         const { userId, lessonId } = req.body;
 
-        // ใช้ INSERT IGNORE เพื่อป้องกันการบันทึกซ้ำ (ถ้ามีอยู่แล้วจะไม่พัง)
+        // ใช้ INSERT IGNORE เพื่อไม่ให้เกิดการบันทึกซ้ำ ถ้ามันมีอยู่แล้วจะไม่พัง
         const sql = "INSERT IGNORE INTO lesson_progress (user_id, lesson_id, completed) VALUES (?, ?, 1)";
 
         db.query(sql, [userId, lessonId], (err, result) => {
@@ -61,5 +58,5 @@ module.exports = (db) => {
         });
     });
 
-    return router; // อยู่ตรงนี้ ถูกต้องแล้ว
+    return router;
 };
